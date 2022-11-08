@@ -18,6 +18,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     BufferedImage berzerkPlayerImage;
     BufferedImage wallImage;
+    BufferedImage bulletImage;
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
@@ -26,7 +27,12 @@ public class GamePanel extends JPanel implements Runnable{
     int playerY = 150;
     int playerSpeed = 3; //reiksme pikseliais
 
-    int map[][] = new int[maxScreenRow][maxScreenColumn];
+    int bulletX = 0;
+    int bulletY = 0;
+    int bulletSpeed = 10;
+
+
+    int[][] map = new int[maxScreenRow][maxScreenColumn];
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -35,8 +41,9 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
         try {
-             berzerkPlayerImage = ImageIO.read(new FileInputStream("resources/BerzerkPlayer.png"));
+             berzerkPlayerImage = ImageIO.read(new FileInputStream("resources/berzerkPlayer.png"));
              wallImage = ImageIO.read(new FileInputStream("resources/wall.bmp"));
+            bulletImage = ImageIO.read(new FileInputStream("resources/bullet.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,14 +83,94 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
+        int leftPlayerX = playerX;
+        int rightPlayerX = playerX + tileSize; // x pos + width
+        int topPlayerY = playerY;
+        int bottomPlayerY = playerY + tileSize; //y pos + height
+
+        int leftPlayerCol = leftPlayerX / tileSize;
+        int rightPlayerCol = rightPlayerX / tileSize;
+        int topPlayerRow = topPlayerY / tileSize;
+        int bottomPlayerRow = bottomPlayerY / tileSize;
+
+        int leftBulletX = bulletX;
+        int rightBulletX = bulletX + tileSize; // x pos + width
+        int topBulletY = bulletY;
+        int bottomBulletY = bulletY + tileSize; //y pos + height
+
+        int leftBulletCol = leftBulletX / tileSize;
+        int rightBulletCol = rightBulletX / tileSize;
+        int topBulletRow = topBulletY / tileSize;
+        int bottomBulletRow = bottomBulletY / tileSize;
+
         if(keyHandler.upPressed){
-            playerY -= playerSpeed;
+            topPlayerRow = (topPlayerY - playerSpeed) / tileSize;
+
+            if(map[topPlayerRow][leftPlayerCol] != 1 && map[topPlayerRow][rightPlayerCol] != 1)
+                playerY -= playerSpeed;
         } else if(keyHandler.downPressed){
-            playerY += playerSpeed;
+            bottomPlayerRow = (bottomPlayerY + playerSpeed) / tileSize;
+
+            if(map[bottomPlayerRow][leftPlayerCol] != 1 && map[bottomPlayerRow][rightPlayerCol] != 1)
+                playerY += playerSpeed;
         } else if(keyHandler.leftPressed){
-            playerX -= playerSpeed;
+            leftPlayerCol = (leftPlayerX - playerSpeed) / tileSize;
+
+            if(map[topPlayerRow][leftPlayerCol] != 1 && map[bottomPlayerRow][leftPlayerCol] != 1)
+                playerX -= playerSpeed;
         } else if(keyHandler.rightPressed){
-            playerX += playerSpeed;
+            rightPlayerCol = (rightPlayerX + playerSpeed) / tileSize;
+
+            if(map[topPlayerRow][rightPlayerCol] != 1 && map[bottomPlayerRow][rightPlayerCol] != 1)
+                playerX += playerSpeed;
+        }else if(keyHandler.shootPressed && ! keyHandler.bulletActive){
+            bulletX = playerX;
+            bulletY = playerY;
+            keyHandler.bulletActive = true;
+        }
+
+        if(keyHandler.bulletActive){
+            if(keyHandler.bulletDirectionUp){
+                topBulletRow = (topBulletY - bulletSpeed) / tileSize;
+
+                if(map[topBulletRow][leftBulletCol] != 1 && map[topBulletRow][rightBulletCol] != 1)
+                    bulletY -= bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }else if(keyHandler.bulletDirectionDown){
+                bottomBulletRow = (bottomBulletY + bulletSpeed) / tileSize;
+
+                if(map[bottomBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletY += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }else if(keyHandler.bulletDirectionLeft){
+                leftBulletCol = (leftBulletX - bulletSpeed) / tileSize;
+
+                if(map[topBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][leftBulletCol] != 1)
+                    bulletX -= bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            } else if(keyHandler.bulletDirectionRight){
+                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
+
+                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletX += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            } else{
+                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
+
+                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletX += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }
         }
     }
 
@@ -103,6 +190,10 @@ public class GamePanel extends JPanel implements Runnable{
             }
             y+=tileSize;
             x = 0;
+        }
+
+        if(keyHandler.bulletActive){
+            g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
         }
 
     }
