@@ -19,9 +19,22 @@ public class GamePanel extends JPanel implements Runnable{
     BufferedImage berzerkPlayerImage;
     BufferedImage wallImage;
     BufferedImage bulletImage;
+    BufferedImage enemyImage;
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+
+    Rectangle playerRectangle;
+    int defaultPlayerRectangleX;
+    int defaultPlayerRectangleY;
+
+    Rectangle enemyRectangle;
+    int defaultEnemyRectangleX;
+    int defaultEnemyRectangleY;
+
+    Rectangle enemy2Rectangle;
+    int defaultEnemy2RectangleX;
+    int defaultEnemy2RectangleY;
 
     int playerX = 150;
     int playerY = 150;
@@ -31,6 +44,11 @@ public class GamePanel extends JPanel implements Runnable{
     int bulletY = 0;
     int bulletSpeed = 10;
 
+    int enemy1X = 3 * tileSize;
+    int enemy1Y = 18 * tileSize;
+
+    int enemy2X = 16 * tileSize;
+    int enemy2Y = 5 * tileSize;
 
     int[][] map = new int[maxScreenRow][maxScreenColumn];
 
@@ -43,7 +61,8 @@ public class GamePanel extends JPanel implements Runnable{
         try {
              berzerkPlayerImage = ImageIO.read(new FileInputStream("resources/berzerkPlayer.png"));
              wallImage = ImageIO.read(new FileInputStream("resources/wall.bmp"));
-            bulletImage = ImageIO.read(new FileInputStream("resources/bullet.png"));
+             bulletImage = ImageIO.read(new FileInputStream("resources/bullet.png"));
+             enemyImage = ImageIO.read(new FileInputStream("resources/enemy.gif"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,6 +79,30 @@ public class GamePanel extends JPanel implements Runnable{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        playerRectangle = new Rectangle();
+        playerRectangle.x = 0;
+        playerRectangle.y = 0;
+        defaultPlayerRectangleX = playerRectangle.x;
+        defaultPlayerRectangleY = playerRectangle.y;
+        playerRectangle.width = tileSize;
+        playerRectangle.height = tileSize;
+
+        enemyRectangle = new Rectangle();
+        enemyRectangle.x = 0;
+        enemyRectangle.y = 0;
+        defaultEnemyRectangleX = enemyRectangle.x;
+        defaultEnemyRectangleY = enemyRectangle.y;
+        enemyRectangle.height = tileSize;
+        enemyRectangle.width = tileSize;
+
+        enemy2Rectangle = new Rectangle();
+        enemy2Rectangle.x = 0;
+        enemy2Rectangle.y = 0;
+        defaultEnemy2RectangleX = enemyRectangle.x;
+        defaultEnemy2RectangleY = enemyRectangle.y;
+        enemy2Rectangle.height = tileSize;
+        enemy2Rectangle.width = tileSize;
     }
 
     @Override
@@ -83,6 +126,9 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
+
+
+
         int leftPlayerX = playerX;
         int rightPlayerX = playerX + tileSize; // x pos + width
         int topPlayerY = playerY;
@@ -106,22 +152,22 @@ public class GamePanel extends JPanel implements Runnable{
         if(keyHandler.upPressed){
             topPlayerRow = (topPlayerY - playerSpeed) / tileSize;
 
-            if(map[topPlayerRow][leftPlayerCol] != 1 && map[topPlayerRow][rightPlayerCol] != 1)
+            if(map[topPlayerRow][leftPlayerCol] == 0 && map[topPlayerRow][rightPlayerCol] == 0)
                 playerY -= playerSpeed;
         } else if(keyHandler.downPressed){
             bottomPlayerRow = (bottomPlayerY + playerSpeed) / tileSize;
 
-            if(map[bottomPlayerRow][leftPlayerCol] != 1 && map[bottomPlayerRow][rightPlayerCol] != 1)
+            if(map[bottomPlayerRow][leftPlayerCol] == 0 && map[bottomPlayerRow][rightPlayerCol] == 0)
                 playerY += playerSpeed;
         } else if(keyHandler.leftPressed){
             leftPlayerCol = (leftPlayerX - playerSpeed) / tileSize;
 
-            if(map[topPlayerRow][leftPlayerCol] != 1 && map[bottomPlayerRow][leftPlayerCol] != 1)
+            if(map[topPlayerRow][leftPlayerCol] == 0 && map[bottomPlayerRow][leftPlayerCol] == 0)
                 playerX -= playerSpeed;
         } else if(keyHandler.rightPressed){
             rightPlayerCol = (rightPlayerX + playerSpeed) / tileSize;
 
-            if(map[topPlayerRow][rightPlayerCol] != 1 && map[bottomPlayerRow][rightPlayerCol] != 1)
+            if(map[topPlayerRow][rightPlayerCol] == 0 && map[bottomPlayerRow][rightPlayerCol] == 0)
                 playerX += playerSpeed;
         }else if(keyHandler.shootPressed && ! keyHandler.bulletActive){
             bulletX = playerX;
@@ -172,6 +218,56 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
+        playerRectangle.x = playerX + playerRectangle.x;
+        playerRectangle.y = playerY + playerRectangle.y;
+
+        enemyRectangle.x = enemy1X + enemyRectangle.x;
+        enemyRectangle.y = enemy1Y + enemyRectangle.y;
+
+        enemy2Rectangle.x = enemy2X + enemy2Rectangle.x;
+        enemy2Rectangle.y = enemy2Y + enemy2Rectangle.y;
+
+        if(keyHandler.upPressed) {
+            playerRectangle.y -= playerSpeed;
+            if(playerRectangle.intersects(enemyRectangle)){
+                System.out.println("up collision for enemy 1");
+            }
+            if(playerRectangle.intersects(enemy2Rectangle)){
+                System.out.println("up collision for enemy 2");
+            }
+        }else if(keyHandler.downPressed){
+            playerRectangle.y += playerSpeed;
+            if(playerRectangle.intersects(enemyRectangle)){
+                System.out.println("down collision for enemy 1");
+            }
+            if(playerRectangle.intersects(enemy2Rectangle)){
+                System.out.println("down collision for enemy 2");
+            }
+        }else if(keyHandler.leftPressed){
+            playerRectangle.x -= playerSpeed;
+            if(playerRectangle.intersects(enemyRectangle)){
+                System.out.println("left collision for enemy 1");
+            }
+            if(playerRectangle.intersects(enemy2Rectangle)){
+                System.out.println("left collision for enemy 2");
+            }
+        }else if(keyHandler.rightPressed){
+            playerRectangle.x += playerSpeed;
+            if(playerRectangle.intersects(enemyRectangle)){
+                System.out.println("right collision for enemy 1");
+            }
+            if(playerRectangle.intersects(enemy2Rectangle)){
+                System.out.println("right collision for enemy 2");
+            }
+        }
+
+        playerRectangle.x = defaultPlayerRectangleX;
+        playerRectangle.y = defaultPlayerRectangleY;
+        enemyRectangle.x = defaultEnemyRectangleX;
+        enemyRectangle.y = defaultEnemyRectangleY;
+        enemy2Rectangle.x = defaultEnemy2RectangleX;
+        enemy2Rectangle.y = defaultEnemy2RectangleY;
+
     }
 
     public void paint(Graphics g){
@@ -195,6 +291,11 @@ public class GamePanel extends JPanel implements Runnable{
         if(keyHandler.bulletActive){
             g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
         }
+
+        g.drawImage(enemyImage, enemy1X, enemy1Y, tileSize, tileSize, null);
+        g.drawImage(enemyImage, enemy2X, enemy2Y, tileSize, tileSize, null);
+
+        g.dispose();
 
     }
 
