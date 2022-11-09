@@ -43,6 +43,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     int defaultEnemy2RectangleX;
     int defaultEnemy2RectangleY;
 
+    Rectangle enemy1BulletRectangle;
+    Rectangle enemy2BulletRectangle;
+    int defaultEnemy1BulletRectangleX;
+    int defaultEnemy1BulletRectangleY;
+    int defaultEnemy2BulletRectangleX;
+    int defaultEnemy2BulletRectangleY;
+
+    boolean enemyBulletActive = false;
+    boolean enemyBulletDirectionUp = false;
+    boolean enemyBulletDirectionDown = false;
+    boolean enemyBulletDirectionLeft = false;
+    boolean enemyBulletDirectionRight = false;
+    int enemyBulletX = 0;
+    int enemyBulletY = 0;
+
     int playerX = 150;
     int playerY = 150;
     int playerSpeed = 3; //reiksme pikseliais
@@ -54,8 +69,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     int enemy1X = 3 * tileSize;
     int enemy1Y = 18 * tileSize;
 
-    int enemy2X = 16 * tileSize;
-    int enemy2Y = 5 * tileSize;
+    int enemy2X = 15 * tileSize;
+    int enemy2Y = 3 * tileSize;
 
     int[][] map = new int[maxScreenRow][maxScreenColumn];
 
@@ -106,10 +121,26 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         enemy2Rectangle = new Rectangle();
         enemy2Rectangle.x = 0;
         enemy2Rectangle.y = 0;
-        defaultEnemy2RectangleX = enemyRectangle.x;
-        defaultEnemy2RectangleY = enemyRectangle.y;
+        defaultEnemy2RectangleX = enemy2Rectangle.x;
+        defaultEnemy2RectangleY = enemy2Rectangle.y;
         enemy2Rectangle.height = tileSize;
         enemy2Rectangle.width = tileSize;
+
+        enemy1BulletRectangle = new Rectangle();
+        enemy1BulletRectangle.x = 0;
+        enemy1BulletRectangle.y = 0;
+        defaultEnemy1BulletRectangleX = enemy1BulletRectangle.x;
+        defaultEnemy1BulletRectangleY = enemy1BulletRectangle.y;
+        enemy1BulletRectangle.height = tileSize;
+        enemy1BulletRectangle.width = tileSize;
+
+        enemy2BulletRectangle = new Rectangle();
+        enemy2BulletRectangle.x = 0;
+        enemy2BulletRectangle.y = 0;
+        defaultEnemy2BulletRectangleX = enemy2BulletRectangle.x;
+        defaultEnemy2BulletRectangleY = enemy2BulletRectangle.y;
+        enemy2BulletRectangle.height = tileSize;
+        enemy2BulletRectangle.width = tileSize;
 
         playAgainButton = new JButton();
         playAgainButton.addActionListener(this);
@@ -248,44 +279,137 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             playerRectangle.y -= playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
                 gameOver = true;
-                System.out.println("up collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
                 gameOver = true;
-                System.out.println("up collision for enemy 2");
             }
         }else if(keyHandler.downPressed){
             playerRectangle.y += playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
                 gameOver = true;
-                System.out.println("down collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
                 gameOver = true;
-                System.out.println("down collision for enemy 2");
             }
         }else if(keyHandler.leftPressed){
             playerRectangle.x -= playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
                 gameOver = true;
-                System.out.println("left collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
                 gameOver = true;
-                System.out.println("left collision for enemy 2");
             }
         }else if(keyHandler.rightPressed){
             playerRectangle.x += playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
                 gameOver = true;
-                System.out.println("right collision for enemy 1");
 
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
                 gameOver = true;
-                System.out.println("right collision for enemy 2");
             }
         }
+
+
+        enemy1BulletRectangle.x = enemyBulletX + enemy1BulletRectangle.x;
+        enemy1BulletRectangle.y = enemyBulletY + enemy1BulletRectangle.y;
+
+        enemy2BulletRectangle.x = enemyBulletX + enemy2BulletRectangle.x;
+        enemy2BulletRectangle.y = enemyBulletY + enemy2BulletRectangle.y;
+
+        int enemyLeftBulletX = enemyBulletX;
+        int enemyRightBulletX = enemyBulletX + tileSize; // x pos + width
+        int enemyTopBulletY = enemyBulletY;
+        int enemyBottomBulletY = enemyBulletY + tileSize; //y pos + height
+
+        int enemyLeftBulletCol = enemyLeftBulletX / tileSize;
+        int enemyRightBulletCol = enemyRightBulletX / tileSize;
+        int enemyTopBulletRow = enemyTopBulletY / tileSize;
+        int enemyBottomBulletRow = enemyBottomBulletY / tileSize;
+        if(enemyBulletActive){
+            if(enemyBulletDirectionUp){
+                enemy1BulletRectangle.y -= bulletSpeed;
+                enemy2BulletRectangle.y -= bulletSpeed;
+
+                enemyTopBulletRow = (enemyTopBulletY - bulletSpeed) / tileSize;
+
+                if(enemy1BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+                if(enemy2BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+
+                if(map[enemyTopBulletRow][enemyLeftBulletCol] != 1 && map[enemyTopBulletRow][enemyRightBulletCol] != 1)
+                    enemyBulletY -= bulletSpeed;
+                else{
+                    enemyBulletActive = false;
+                    enemyBulletDirectionUp = false;
+                }
+            }else if(enemyBulletDirectionDown){
+                enemy1BulletRectangle.y += bulletSpeed;
+                enemy2BulletRectangle.y += bulletSpeed;
+
+                enemyBottomBulletRow = (enemyBottomBulletY + bulletSpeed) / tileSize;
+
+                if(enemy1BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+                if(enemy2BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+
+                if(map[enemyBottomBulletRow][enemyLeftBulletCol] != 1 && map[enemyBottomBulletRow][enemyRightBulletCol] != 1)
+                    enemyBulletY += bulletSpeed;
+                else{
+                    enemyBulletActive = false;
+                    enemyBulletDirectionDown = false;
+                }
+            }else if(enemyBulletDirectionLeft){
+                enemy1BulletRectangle.x -= bulletSpeed;
+                enemy2BulletRectangle.x -= bulletSpeed;
+
+                enemyLeftBulletCol = (enemyLeftBulletX - bulletSpeed) / tileSize;
+
+                if(enemy1BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+                if(enemy2BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+
+                if(map[enemyTopBulletRow][enemyLeftBulletCol] != 1 && map[enemyBottomBulletRow][enemyLeftBulletCol] != 1)
+                    enemyBulletX -= bulletSpeed;
+                else{
+                    enemyBulletActive = false;
+                    enemyBulletDirectionLeft = false;
+                }
+            } else if(enemyBulletDirectionRight){
+                enemy1BulletRectangle.x += bulletSpeed;
+                enemy2BulletRectangle.x += bulletSpeed;
+
+                enemyRightBulletCol = (enemyRightBulletX + bulletSpeed) / tileSize;
+
+                if(enemy1BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+                if(enemy2BulletRectangle.intersects(playerRectangle)){
+                    gameOver = true;
+                }
+
+                if(map[enemyTopBulletRow][enemyRightBulletCol] != 1 && map[enemyBottomBulletRow][enemyRightBulletCol] != 1)
+                    enemyBulletX += bulletSpeed;
+                else{
+                    enemyBulletActive = false;
+                    enemyBulletDirectionRight = false;
+                }
+            }
+        }
+
+        enemy1BulletRectangle.x = defaultEnemy1BulletRectangleX;
+        enemy1BulletRectangle.y = defaultEnemy1BulletRectangleY;
+        enemy2BulletRectangle.x = defaultEnemy2BulletRectangleX;
+        enemy2BulletRectangle.y = defaultEnemy2BulletRectangleY;
 
         playerRectangle.x = defaultPlayerRectangleX;
         playerRectangle.y = defaultPlayerRectangleY;
@@ -294,6 +418,68 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         enemy2Rectangle.x = defaultEnemy2RectangleX;
         enemy2Rectangle.y = defaultEnemy2RectangleY;
 
+
+
+        if(playerX == enemy1X){
+            System.out.println("vertical view of enemy 1");
+            if(playerY > enemy1Y) {
+                enemyBulletDirectionDown = true;
+                enemyBulletX = enemy1X;
+                enemyBulletY = enemy1Y;
+                enemyBulletActive = true;
+            }
+            else{
+                enemyBulletDirectionUp = true;
+                enemyBulletX = enemy1X;
+                enemyBulletY = enemy1Y;
+                enemyBulletActive = true;
+            }
+        }
+        if(playerY == enemy1Y){
+            System.out.println("horizontal view of enemy 1");
+            if(playerX > enemy1X) {
+                enemyBulletDirectionRight = true;
+                enemyBulletX = enemy1X;
+                enemyBulletY = enemy1Y;
+                enemyBulletActive = true;
+            }
+            else{
+                enemyBulletDirectionLeft = true;
+                enemyBulletX = enemy1X;
+                enemyBulletY = enemy1Y;
+                enemyBulletActive = true;
+            }
+        }
+        if(playerX == enemy2X){
+            System.out.println("vertical view of enemy 2");
+            if(playerY > enemy2Y) {
+                enemyBulletDirectionDown = true;
+                enemyBulletX = enemy2X;
+                enemyBulletY = enemy2Y;
+                enemyBulletActive = true;
+            }
+            else{
+                enemyBulletDirectionUp = true;
+                enemyBulletX = enemy2X;
+                enemyBulletY = enemy2Y;
+                enemyBulletActive = true;
+            }
+        }
+        if(playerY == enemy2Y){
+            System.out.println("horizontal view of enemy 2");
+            if(playerX > enemy2X) {
+                enemyBulletDirectionRight = true;
+                enemyBulletX = enemy2X;
+                enemyBulletY = enemy2Y;
+                enemyBulletActive = true;
+            }
+            else{
+                enemyBulletDirectionLeft = true;
+                enemyBulletX = enemy2X;
+                enemyBulletY = enemy2Y;
+                enemyBulletActive = true;
+            }
+        }
     }
 
     public void paint(Graphics g){
@@ -334,6 +520,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             if (keyHandler.bulletActive) {
                 g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
             }
+            if(enemyBulletActive){
+                g.drawImage(bulletImage, enemyBulletX, enemyBulletY, tileSize, tileSize, null);
+            }
 
             g.drawImage(enemyImage, enemy1X, enemy1Y, tileSize, tileSize, null);
             g.drawImage(enemyImage, enemy2X, enemy2Y, tileSize, tileSize, null);
@@ -356,6 +545,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             playerY = 150;
             playAgainButton.setVisible(false);
             quitGameButton.setVisible(false);
+            enemyBulletActive = false;
+            enemyBulletDirectionRight = false;
+            enemyBulletDirectionLeft = false;
+            enemyBulletDirectionDown = false;
+            enemyBulletDirectionUp = false;
             gameOver = false;
         } else if(Objects.equals(e.getActionCommand(), "Quit")){
             System.exit(0);
