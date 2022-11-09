@@ -50,6 +50,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     int defaultEnemy2BulletRectangleX;
     int defaultEnemy2BulletRectangleY;
 
+    Rectangle playerBulletRectangle;
+    int defaultplayerBulletRectangleX;
+    int defaultplayerBulletRectangleY;
+
     boolean enemyBulletActive = false;
     boolean enemyBulletDirectionUp = false;
     boolean enemyBulletDirectionDown = false;
@@ -142,6 +146,14 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         enemy2BulletRectangle.height = tileSize;
         enemy2BulletRectangle.width = tileSize;
 
+        playerBulletRectangle = new Rectangle();
+        playerBulletRectangle.x = 0;
+        playerBulletRectangle.y = 0;
+        defaultplayerBulletRectangleX = playerBulletRectangle.x;
+        defaultplayerBulletRectangleY = playerBulletRectangle.y;
+        playerBulletRectangle.height = tileSize;
+        playerBulletRectangle.width = tileSize;
+
         playAgainButton = new JButton();
         playAgainButton.addActionListener(this);
         playAgainButton.setVisible(false);
@@ -223,49 +235,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             keyHandler.bulletActive = true;
         }
 
-        if(keyHandler.bulletActive){
-            if(keyHandler.bulletDirectionUp){
-                topBulletRow = (topBulletY - bulletSpeed) / tileSize;
 
-                if(map[topBulletRow][leftBulletCol] != 1 && map[topBulletRow][rightBulletCol] != 1)
-                    bulletY -= bulletSpeed;
-                else{
-                    keyHandler.bulletActive = false;
-                }
-            }else if(keyHandler.bulletDirectionDown){
-                bottomBulletRow = (bottomBulletY + bulletSpeed) / tileSize;
-
-                if(map[bottomBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
-                    bulletY += bulletSpeed;
-                else{
-                    keyHandler.bulletActive = false;
-                }
-            }else if(keyHandler.bulletDirectionLeft){
-                leftBulletCol = (leftBulletX - bulletSpeed) / tileSize;
-
-                if(map[topBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][leftBulletCol] != 1)
-                    bulletX -= bulletSpeed;
-                else{
-                    keyHandler.bulletActive = false;
-                }
-            } else if(keyHandler.bulletDirectionRight){
-                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
-
-                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
-                    bulletX += bulletSpeed;
-                else{
-                    keyHandler.bulletActive = false;
-                }
-            } else{
-                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
-
-                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
-                    bulletX += bulletSpeed;
-                else{
-                    keyHandler.bulletActive = false;
-                }
-            }
-        }
         playerRectangle.x = playerX + playerRectangle.x;
         playerRectangle.y = playerY + playerRectangle.y;
 
@@ -309,6 +279,102 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 gameOver = true;
             }
         }
+
+
+        playerBulletRectangle.x = bulletX + playerBulletRectangle.x;
+        playerBulletRectangle.y = bulletY + playerBulletRectangle.y;
+
+        if(keyHandler.bulletActive){
+            if(keyHandler.bulletDirectionUp){
+                playerBulletRectangle.y -= bulletSpeed;
+
+                topBulletRow = (topBulletY - bulletSpeed) / tileSize;
+
+                if(playerBulletRectangle.intersects(enemyRectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+                if(playerBulletRectangle.intersects(enemy2Rectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+
+                if(map[topBulletRow][leftBulletCol] != 1 && map[topBulletRow][rightBulletCol] != 1)
+                    bulletY -= bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }else if(keyHandler.bulletDirectionDown){
+                playerBulletRectangle.y += bulletSpeed;
+
+                bottomBulletRow = (bottomBulletY + bulletSpeed) / tileSize;
+
+                if(playerBulletRectangle.intersects(enemyRectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+                if(playerBulletRectangle.intersects(enemy2Rectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+
+                if(map[bottomBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletY += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }else if(keyHandler.bulletDirectionLeft){
+                playerBulletRectangle.x -= bulletSpeed;
+
+                leftBulletCol = (leftBulletX - bulletSpeed) / tileSize;
+
+                if(playerBulletRectangle.intersects(enemyRectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+                if(playerBulletRectangle.intersects(enemy2Rectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+
+                if(map[topBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][leftBulletCol] != 1)
+                    bulletX -= bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            } else if(keyHandler.bulletDirectionRight){
+                playerBulletRectangle.x += bulletSpeed;
+
+                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
+
+                if(playerBulletRectangle.intersects(enemyRectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+                if(playerBulletRectangle.intersects(enemy2Rectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+
+                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletX += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            } else{
+                playerBulletRectangle.x += bulletSpeed;
+
+                rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
+
+                if(playerBulletRectangle.intersects(enemyRectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+                if(playerBulletRectangle.intersects(enemy2Rectangle)){
+                    System.out.println("pataikiau i priesa");
+                }
+
+                if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
+                    bulletX += bulletSpeed;
+                else{
+                    keyHandler.bulletActive = false;
+                }
+            }
+        }
+
+        playerBulletRectangle.x = defaultplayerBulletRectangleX;
+        playerBulletRectangle.y = defaultplayerBulletRectangleY;
 
 
         enemy1BulletRectangle.x = enemyBulletX + enemy1BulletRectangle.x;
