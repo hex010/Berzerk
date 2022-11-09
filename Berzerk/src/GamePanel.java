@@ -1,11 +1,14 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Objects;
 import java.util.Scanner;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable, ActionListener {
     final int originalTileSize = 16;
     final int scale = 2;
     final int tileSize = originalTileSize * scale;
@@ -15,6 +18,10 @@ public class GamePanel extends JPanel implements Runnable{
     final int screenHeight = tileSize * maxScreenRow;
     final int fpsCount = 60;
     final int oneSecondInNanoTime = 1000000000;
+
+    JButton playAgainButton;
+    JButton quitGameButton;
+    Boolean gameOver = false;
 
     BufferedImage berzerkPlayerImage;
     BufferedImage wallImage;
@@ -103,6 +110,16 @@ public class GamePanel extends JPanel implements Runnable{
         defaultEnemy2RectangleY = enemyRectangle.y;
         enemy2Rectangle.height = tileSize;
         enemy2Rectangle.width = tileSize;
+
+        playAgainButton = new JButton();
+        playAgainButton.addActionListener(this);
+        playAgainButton.setVisible(false);
+        this.add(playAgainButton);
+
+        quitGameButton = new JButton();
+        quitGameButton.addActionListener(this);
+        quitGameButton.setVisible(false);
+        this.add(quitGameButton);
     }
 
     @Override
@@ -126,7 +143,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-
+        if(gameOver) return;
 
 
         int leftPlayerX = playerX;
@@ -230,33 +247,42 @@ public class GamePanel extends JPanel implements Runnable{
         if(keyHandler.upPressed) {
             playerRectangle.y -= playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
+                gameOver = true;
                 System.out.println("up collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
+                gameOver = true;
                 System.out.println("up collision for enemy 2");
             }
         }else if(keyHandler.downPressed){
             playerRectangle.y += playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
+                gameOver = true;
                 System.out.println("down collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
+                gameOver = true;
                 System.out.println("down collision for enemy 2");
             }
         }else if(keyHandler.leftPressed){
             playerRectangle.x -= playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
+                gameOver = true;
                 System.out.println("left collision for enemy 1");
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
+                gameOver = true;
                 System.out.println("left collision for enemy 2");
             }
         }else if(keyHandler.rightPressed){
             playerRectangle.x += playerSpeed;
             if(playerRectangle.intersects(enemyRectangle)){
+                gameOver = true;
                 System.out.println("right collision for enemy 1");
+
             }
             if(playerRectangle.intersects(enemy2Rectangle)){
+                gameOver = true;
                 System.out.println("right collision for enemy 2");
             }
         }
@@ -272,28 +298,47 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void paint(Graphics g){
         super.paint(g);
+        if(gameOver){
+            g.setColor(Color.red);
+            g.setFont(new Font("MS Mincho", Font.PLAIN, 50));
+            g.drawString("GAME OVER", screenWidth/3, screenHeight/3);
 
-        g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
+            playAgainButton.setText("Play again");
+            playAgainButton.setSize(200, 50);
+            playAgainButton.setLocation(screenWidth/3 + 50, screenHeight/3 + 50);
+            playAgainButton.setBackground(Color.white);
 
-        int x = 0;
-        int y = 0;
-        for(int i = 0; i < maxScreenRow; i++){
-            for(int j = 0; j < maxScreenColumn; j++) {
-                if(map[i][j] == 1){
-                    g.drawImage(wallImage, x, y, tileSize, tileSize, null);
+            quitGameButton.setText("Quit");
+            quitGameButton.setSize(100, 50);
+            quitGameButton.setLocation(screenWidth/3 + 100, screenHeight/3 + 120);
+            quitGameButton.setBackground(Color.white);
+
+            playAgainButton.setVisible(true);
+            quitGameButton.setVisible(true);
+        }else {
+            g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
+
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < maxScreenRow; i++) {
+                for (int j = 0; j < maxScreenColumn; j++) {
+                    if (map[i][j] == 1) {
+                        g.drawImage(wallImage, x, y, tileSize, tileSize, null);
+                    }
+                    x += tileSize;
                 }
-                x+=tileSize;
+                y += tileSize;
+                x = 0;
             }
-            y+=tileSize;
-            x = 0;
-        }
 
-        if(keyHandler.bulletActive){
-            g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
-        }
+            if (keyHandler.bulletActive) {
+                g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
+            }
 
-        g.drawImage(enemyImage, enemy1X, enemy1Y, tileSize, tileSize, null);
-        g.drawImage(enemyImage, enemy2X, enemy2Y, tileSize, tileSize, null);
+            g.drawImage(enemyImage, enemy1X, enemy1Y, tileSize, tileSize, null);
+            g.drawImage(enemyImage, enemy2X, enemy2Y, tileSize, tileSize, null);
+
+        }
 
         g.dispose();
 
@@ -304,4 +349,16 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread.start();
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(Objects.equals(e.getActionCommand(), "Play again")){
+            playerX = 150;
+            playerY = 150;
+            playAgainButton.setVisible(false);
+            quitGameButton.setVisible(false);
+            gameOver = false;
+        } else if(Objects.equals(e.getActionCommand(), "Quit")){
+            System.exit(0);
+        }
+    }
 }
