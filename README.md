@@ -1,6 +1,6 @@
 # Berzerk
 
-Užduotis: sukurti
+Paskirtas žaidimas:
 Berzerk (https://en.wikipedia.org/wiki/Berzerk_(video_game))
 
 1 užduotis. Suprogramuoti žaidimą (viso 5 balai).
