@@ -264,6 +264,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         }
 
 
+
+
+
         playerRectangle.x = playerX + playerRectangle.x;
         playerRectangle.y = playerY + playerRectangle.y;
 
@@ -544,7 +547,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
 
 
-        if(playerX == enemy1X){
+        if(playerX / tileSize == enemy1X / tileSize){
             System.out.println("vertical view of enemy 1");
             if(playerY > enemy1Y) {
                 enemyBulletDirectionDown = true;
@@ -559,7 +562,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 enemyBulletActive = true;
             }
         }
-        if(playerY == enemy1Y){
+        if(playerY / tileSize == enemy1Y / tileSize){
             System.out.println("horizontal view of enemy 1");
             if(playerX > enemy1X) {
                 enemyBulletDirectionRight = true;
@@ -574,7 +577,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 enemyBulletActive = true;
             }
         }
-        if(playerX == enemy2X){
+        if(playerX / tileSize == enemy2X / tileSize){
             System.out.println("vertical view of enemy 2");
             if(playerY > enemy2Y) {
                 enemyBulletDirectionDown = true;
@@ -589,7 +592,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 enemyBulletActive = true;
             }
         }
-        if(playerY == enemy2Y){
+        if(playerY / tileSize == enemy2Y / tileSize){
             System.out.println("horizontal view of enemy 2");
             if(playerX > enemy2X) {
                 enemyBulletDirectionRight = true;
