@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Scanner;
 
 public class GamePanel extends JPanel implements Runnable, ActionListener {
@@ -18,6 +19,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     final int screenHeight = tileSize * maxScreenRow;
     final int fpsCount = 60;
     final int oneSecondInNanoTime = 1000000000;
+
+    Random random = new Random();
+    int[] enemyPositionsX = new int[7];
+    int[] enemyPositionsY = new int[7];
 
     JButton playAgainButton;
     JButton quitGameButton;
@@ -62,6 +67,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     int enemyBulletX = 0;
     int enemyBulletY = 0;
 
+    int score = 0;
+
     int playerX = 150;
     int playerY = 150;
     int playerSpeed = 3; //reiksme pikseliais
@@ -105,6 +112,27 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        enemyPositionsX[0] = 9 * tileSize;
+        enemyPositionsY[0] = 12 * tileSize; // +
+
+        enemyPositionsX[1] = 19 * tileSize;
+        enemyPositionsY[1] = 19 * tileSize;
+
+        enemyPositionsX[2] = 13 * tileSize;
+        enemyPositionsY[2] = 19 * tileSize; // - abu
+
+        enemyPositionsX[3] = 21 * tileSize;
+        enemyPositionsY[3] = 11 * tileSize;
+
+        enemyPositionsX[4] = 9 * tileSize;
+        enemyPositionsY[4] = 4 * tileSize;
+
+        enemyPositionsX[5] = 3 * tileSize;
+        enemyPositionsY[5] = 18 * tileSize; // +
+
+        enemyPositionsX[6] = 15 * tileSize;
+        enemyPositionsY[6] = 3 * tileSize; // +
 
         playerRectangle = new Rectangle();
         playerRectangle.x = 0;
@@ -291,10 +319,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 topBulletRow = (topBulletY - bulletSpeed) / tileSize;
 
                 if(playerBulletRectangle.intersects(enemyRectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy1X = enemyPositionsX[randomPosition];
+                    enemy1Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
                 if(playerBulletRectangle.intersects(enemy2Rectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy2X = enemyPositionsX[randomPosition];
+                    enemy2Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
 
                 if(map[topBulletRow][leftBulletCol] != 1 && map[topBulletRow][rightBulletCol] != 1)
@@ -308,10 +342,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 bottomBulletRow = (bottomBulletY + bulletSpeed) / tileSize;
 
                 if(playerBulletRectangle.intersects(enemyRectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy1X = enemyPositionsX[randomPosition];
+                    enemy1Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
                 if(playerBulletRectangle.intersects(enemy2Rectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy2X = enemyPositionsX[randomPosition];
+                    enemy2Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
 
                 if(map[bottomBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
@@ -325,10 +365,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 leftBulletCol = (leftBulletX - bulletSpeed) / tileSize;
 
                 if(playerBulletRectangle.intersects(enemyRectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy1X = enemyPositionsX[randomPosition];
+                    enemy1Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
                 if(playerBulletRectangle.intersects(enemy2Rectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy2X = enemyPositionsX[randomPosition];
+                    enemy2Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
 
                 if(map[topBulletRow][leftBulletCol] != 1 && map[bottomBulletRow][leftBulletCol] != 1)
@@ -342,10 +388,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
 
                 if(playerBulletRectangle.intersects(enemyRectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy1X = enemyPositionsX[randomPosition];
+                    enemy1Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
                 if(playerBulletRectangle.intersects(enemy2Rectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy2X = enemyPositionsX[randomPosition];
+                    enemy2Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
 
                 if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
@@ -359,10 +411,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 rightBulletCol = (rightBulletX + bulletSpeed) / tileSize;
 
                 if(playerBulletRectangle.intersects(enemyRectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy1X = enemyPositionsX[randomPosition];
+                    enemy1Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
                 if(playerBulletRectangle.intersects(enemy2Rectangle)){
-                    System.out.println("pataikiau i priesa");
+                    int randomPosition = random.nextInt(7);
+                    enemy2X = enemyPositionsX[randomPosition];
+                    enemy2Y = enemyPositionsY[randomPosition];
+                    score++;
                 }
 
                 if(map[topBulletRow][rightBulletCol] != 1 && map[bottomBulletRow][rightBulletCol] != 1)
@@ -550,6 +608,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public void paint(Graphics g){
         super.paint(g);
+
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font("MS Mincho", Font.PLAIN, 20));
+        g.drawString("Score: "+ score, 50, screenHeight-50);
+
         if(gameOver){
             g.setColor(Color.red);
             g.setFont(new Font("MS Mincho", Font.PLAIN, 50));
@@ -611,11 +674,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             playerY = 150;
             playAgainButton.setVisible(false);
             quitGameButton.setVisible(false);
+            keyHandler.bulletActive = false;
+            keyHandler.bulletDirectionUp = false;
+            keyHandler.bulletDirectionLeft = false;
+            keyHandler.bulletDirectionDown = false;
+            keyHandler.bulletDirectionRight = false;
             enemyBulletActive = false;
             enemyBulletDirectionRight = false;
             enemyBulletDirectionLeft = false;
             enemyBulletDirectionDown = false;
             enemyBulletDirectionUp = false;
+            enemy1X = 3 * tileSize;
+            enemy1Y = 18 * tileSize;
+            enemy2X = 15 * tileSize;
+            enemy2Y = 3 * tileSize;
+            score = 0;
             gameOver = false;
         } else if(Objects.equals(e.getActionCommand(), "Quit")){
             System.exit(0);
