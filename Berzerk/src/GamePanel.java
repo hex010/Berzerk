@@ -79,10 +79,14 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     int enemy1X = 3 * tileSize;
     int enemy1Y = 18 * tileSize;
+    boolean enemy1MustRotate = false;
 
     int enemy2X = 15 * tileSize;
     int enemy2Y = 3 * tileSize;
+    boolean enemy2MustRotate = false;
 
+    int enemySpeed = 4;
+    int enemyMoveCooldown = 0;
     int[][] map = new int[maxScreenRow][maxScreenColumn];
 
     public GamePanel(){
@@ -215,7 +219,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public void update(){
         if(gameOver) return;
-
+        enemyMoveCooldown++;
 
         int leftPlayerX = playerX;
         int rightPlayerX = playerX + tileSize; // x pos + width
@@ -264,7 +268,70 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         }
 
 
+        if(enemyMoveCooldown == 15) {
 
+            //enemy 1
+            int leftEnemy1X = enemy1X;
+            int rightEnemy1X = enemy1X + tileSize; // x pos + width
+            int topEnemy1Y = enemy1Y;
+            int bottomEnemy1Y = enemy1Y + tileSize; //y pos + height
+
+            int leftEnemy1Col = leftEnemy1X / tileSize;
+            int rightEnemy1Col = rightEnemy1X / tileSize;
+            int topEnemy1Row = topEnemy1Y / tileSize;
+            int bottomEnemy1Row = bottomEnemy1Y / tileSize;
+
+
+            if(!enemy1MustRotate){
+                leftEnemy1Col = (leftEnemy1X - enemySpeed) / tileSize;
+
+                if (map[topEnemy1Row][leftEnemy1Col] == 0 && map[bottomEnemy1Row][leftEnemy1Col] == 0)
+                    enemy1X -= enemySpeed;
+                else{
+                    enemy1MustRotate = true;
+                }
+            }else{
+                rightEnemy1Col = (rightEnemy1X + enemySpeed) / tileSize;
+
+                if (map[topEnemy1Row][rightEnemy1Col] == 0 && map[bottomEnemy1Row][rightEnemy1Col] == 0)
+                    enemy1X += enemySpeed;
+                else{
+                    enemy1MustRotate = false;
+                }
+            }
+
+
+            //enemy 2
+            int leftEnemy2X = enemy2X;
+            int rightEnemy2X = enemy2X + tileSize; // x pos + width
+            int topEnemy2Y = enemy2Y;
+            int bottomEnemy2Y = enemy2Y + tileSize; //y pos + height
+
+            int leftEnemy2Col = leftEnemy2X / tileSize;
+            int rightEnemy2Col = rightEnemy2X / tileSize;
+            int topEnemy2Row = topEnemy2Y / tileSize;
+            int bottomEnemy2Row = bottomEnemy2Y / tileSize;
+
+            if(!enemy2MustRotate){
+                topEnemy2Row = (topEnemy2Y - enemySpeed) / tileSize;
+
+                if (map[topEnemy2Row][leftEnemy2Col] == 0 && map[topEnemy2Row][rightEnemy2Col] == 0)
+                    enemy2Y -= enemySpeed;
+                else{
+                    enemy2MustRotate = true;
+                }
+            }else{
+                bottomEnemy2Row = (bottomEnemy2Y + enemySpeed) / tileSize;
+
+                if (map[bottomEnemy2Row][leftEnemy2Col] == 0 && map[bottomEnemy2Row][rightEnemy2Col] == 0)
+                    enemy2Y += enemySpeed;
+                else{
+                    enemy2MustRotate = false;
+                }
+            }
+
+            enemyMoveCooldown = 0;
+        }
 
 
         playerRectangle.x = playerX + playerRectangle.x;
