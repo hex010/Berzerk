@@ -22,11 +22,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     final int oneSecondInNanoTime = 1000000000;
     Thread gameThread;
     KeyHandler keyHandler = new KeyHandler();
-
     Player player = new Player(this, keyHandler);
     Map gameMap = new Map(this);
     Collision collision = new Collision(this);
     ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<Enemy> enemies = new ArrayList<>();
 
     Random random = new Random();
     int[] enemyPositionsX = new int[7];
@@ -102,8 +102,18 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         loadResources();
         readGameMap();
         setEnemyPositionsArrayValues();
+        addEnemies();
         setRectangleParameters();
         setButtonParameters();
+    }
+
+    private void addEnemies() {
+        for(int i = 0; i < 3; i++){
+            int randomPosition = random.nextInt(7);
+            Enemy enemy = new Enemy(this);
+            enemy.setEnemy(enemyPositionsX[randomPosition], enemyPositionsY[randomPosition]);
+            enemies.add(enemy);
+        }
     }
 
     public int getTileSize() {
@@ -120,6 +130,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public Map getGameMap() {
         return gameMap;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public Collision getCollision() {
@@ -276,6 +290,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
                 }else{
                     bullets.remove(i);
                 }
+            }
+        }
+
+        for(int i = 0; i < enemies.size(); i++){
+            if(enemies.get(i) != null){
+                enemies.get(i).update();
             }
         }
 
@@ -772,22 +792,18 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         }else {
             player.paint(g);
             gameMap.paint(g);
-            for(int i = 0; i < bullets.size(); i++){
-                if(bullets.get(i) != null){
-                    bullets.get(i).paint(g);
+
+            for (Bullet bullet : bullets) {
+                if (bullet != null) {
+                    bullet.paint(g);
                 }
             }
-            //drawGameMap(g);
-            //g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
 
-//            if (keyHandler.bulletActive)
-//                g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
-
-            if(enemyBulletActive)
-                g.drawImage(bulletImage, enemyBulletX, enemyBulletY, tileSize, tileSize, null);
-
-            g.drawImage(enemyImage, enemy1X, enemy1Y, tileSize, tileSize, null);
-            g.drawImage(enemyImage, enemy2X, enemy2Y, tileSize, tileSize, null);
+            for (Enemy enemy : enemies) {
+                if (enemy != null) {
+                    enemy.paint(g);
+                }
+            }
         }
 
         g.dispose();
@@ -819,21 +835,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         g.setColor(Color.red);
         g.setFont(new Font("MS Mincho", Font.PLAIN, 50));
         g.drawString("GAME OVER", screenWidth/3, screenHeight/3);
-    }
-
-    private void drawGameMap(Graphics g) {
-        int x = 0;
-        int y = 0;
-        for (int i = 0; i < maxScreenRow; i++) {
-            for (int j = 0; j < maxScreenColumn; j++) {
-                if (map[i][j] == 1) {
-                    g.drawImage(wallImage, x, y, tileSize, tileSize, null);
-                }
-                x += tileSize;
-            }
-            y += tileSize;
-            x = 0;
-        }
     }
 
     public void startGameThread(){

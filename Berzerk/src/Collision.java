@@ -110,4 +110,34 @@ public class Collision {
 
         return false;
     }
+
+    public boolean checkEnemyCollisionWithTile(Enemy enemy) {
+        int leftEnemy1X = enemy.getPositionX();
+        int rightEnemy1X = enemy.getPositionX() + gamePanel.getTileSize(); // x pos + width
+        int topEnemy1Y = enemy.getPositionY();
+        int bottomEnemy1Y = enemy.getPositionY() + gamePanel.getTileSize(); //y pos + height
+
+        int leftEnemy1Col = leftEnemy1X / gamePanel.getTileSize();
+        int rightEnemy1Col = rightEnemy1X / gamePanel.getTileSize();
+        int topEnemy1Row = topEnemy1Y / gamePanel.getTileSize();
+        int bottomEnemy1Row = bottomEnemy1Y / gamePanel.getTileSize();
+
+        if(!enemy.isMustRotate()){
+            leftEnemy1Col = (leftEnemy1X - enemy.getMovingSpeed()) / gamePanel.getTileSize();
+
+            if (!gamePanel.getGameMap().tiles[topEnemy1Row][leftEnemy1Col].isHasCollision() &&
+                    !gamePanel.getGameMap().tiles[bottomEnemy1Row][leftEnemy1Col].isHasCollision())
+                return false;
+            else
+                return  true;
+        }else{
+            rightEnemy1Col = (rightEnemy1X + enemy.getMovingSpeed()) / gamePanel.getTileSize();
+
+            if (!gamePanel.getGameMap().tiles[topEnemy1Row][rightEnemy1Col].isHasCollision() &&
+                    !gamePanel.getGameMap().tiles[bottomEnemy1Row][rightEnemy1Col].isHasCollision())
+                return false;
+            else
+                return  true;
+        }
+    }
 }
