@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
@@ -25,6 +26,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     Player player = new Player(this, keyHandler);
     Map gameMap = new Map(this);
     Collision collision = new Collision(this);
+    ArrayList<Bullet> bullets = new ArrayList<>();
 
     Random random = new Random();
     int[] enemyPositionsX = new int[7];
@@ -266,6 +268,17 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     public void update(){
         if(gameOver) return;
         player.update();
+
+        for(int i = 0; i < bullets.size(); i++){
+            if(bullets.get(i) != null){
+                if(bullets.get(i).isActive()){
+                    bullets.get(i).update();
+                }else{
+                    bullets.remove(i);
+                }
+            }
+        }
+
         boolean a = false;
         if(!a){
 
@@ -759,11 +772,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         }else {
             player.paint(g);
             gameMap.paint(g);
+            for(int i = 0; i < bullets.size(); i++){
+                if(bullets.get(i) != null){
+                    bullets.get(i).paint(g);
+                }
+            }
             //drawGameMap(g);
             //g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
 
-            if (keyHandler.bulletActive)
-                g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
+//            if (keyHandler.bulletActive)
+//                g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
 
             if(enemyBulletActive)
                 g.drawImage(bulletImage, enemyBulletX, enemyBulletY, tileSize, tileSize, null);

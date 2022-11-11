@@ -10,6 +10,7 @@ public class Player {
     private int movingSpeed;
     private GamePanel gamePanel;
     private KeyHandler keyHandler;
+    private Bullet bullet;
     private BufferedImage bufferedImage;
     private Rectangle rectangle;
 
@@ -60,6 +61,7 @@ public class Player {
         positionX = 150;
         positionY = 150;
         movingSpeed = 3;
+        bullet = new Bullet(gamePanel);
     }
 
     private void setImage() {
@@ -91,6 +93,9 @@ public class Player {
 
             if(!gamePanel.getCollision().checkPlayerCollisionWithTile(this))
                 positionX += movingSpeed;
+        } else if(keyHandler.shootPressed && !bullet.isActive()){
+            bullet.setBullet(positionX, positionY, direction, true);
+            gamePanel.bullets.add(bullet);
         }
 
     }

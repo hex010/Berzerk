@@ -57,4 +57,57 @@ public class Collision {
 
         return false;
     }
+
+    public boolean checkBulletCollisionWithTile(Bullet bullet){
+        int leftBulletX = bullet.getPositionX();
+        int rightBulletX = bullet.getPositionX() + gamePanel.getTileSize(); // x pos + width
+        int topBulletY = bullet.getPositionY();
+        int bottomBulletY = bullet.getPositionY() + gamePanel.getTileSize(); //y pos + height
+
+        int leftBulletCol = leftBulletX / gamePanel.getTileSize();
+        int rightBulletCol = rightBulletX / gamePanel.getTileSize();
+        int topBulletRow = topBulletY / gamePanel.getTileSize();
+        int bottomBulletRow = bottomBulletY / gamePanel.getTileSize();
+
+        switch (bullet.getDirection()){
+            case UP: {
+                topBulletRow = (topBulletY - bullet.getMovingSpeed()) / gamePanel.getTileSize();
+
+                if(!gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision())
+                    return false;
+                else
+                    return  true;
+            }
+            case DOWN: {
+                bottomBulletRow = (bottomBulletY + bullet.getMovingSpeed()) / gamePanel.getTileSize();
+
+                if(!gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision())
+                    return false;
+                else
+                    return  true;
+            }
+            case LEFT: {
+                leftBulletCol = (leftBulletX - bullet.getMovingSpeed()) / gamePanel.getTileSize();
+
+                if(!gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision())
+                    return false;
+                else
+                    return  true;
+            }
+            case RIGHT: {
+                rightBulletCol = (rightBulletX + bullet.getMovingSpeed()) / gamePanel.getTileSize();
+
+                if(!gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision())
+                    return false;
+                else
+                    return  true;
+            }
+        }
+
+        return false;
+    }
 }
