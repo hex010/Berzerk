@@ -16,7 +16,6 @@ public class Player {
 
     private Direction direction;
 
-    private boolean collided = false;
     public int getPositionX() {
         return positionX;
     }
@@ -31,14 +30,6 @@ public class Player {
 
     public int getMovingSpeed() {
         return movingSpeed;
-    }
-
-    public boolean getCollided() {
-        return collided;
-    }
-
-    public void setCollided(boolean collided) {
-        this.collided = collided;
     }
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {

@@ -14,7 +14,7 @@ public class Bullet {
     GamePanel gamePanel;
 
     public Bullet(GamePanel gamePanel) {
-        movingSpeed = 5;
+        movingSpeed = 7;
         setImage();
         this.gamePanel = gamePanel;
     }
