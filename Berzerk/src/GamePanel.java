@@ -19,6 +19,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     final int screenHeight = tileSize * maxScreenRow;
     final int fpsCount = 60;
     final int oneSecondInNanoTime = 1000000000;
+    Thread gameThread;
+    KeyHandler keyHandler = new KeyHandler();
+
+    Player player = new Player(this, keyHandler);
+    Map gameMap = new Map(this);
+    Collision collision = new Collision(this);
 
     Random random = new Random();
     int[] enemyPositionsX = new int[7];
@@ -33,8 +39,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     BufferedImage bulletImage;
     BufferedImage enemyImage;
 
-    KeyHandler keyHandler = new KeyHandler();
-    Thread gameThread;
+
 
     Rectangle playerRectangle;
     int defaultPlayerRectangleX;
@@ -97,6 +102,26 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         setEnemyPositionsArrayValues();
         setRectangleParameters();
         setButtonParameters();
+    }
+
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    public int getMaxScreenRow() {
+        return maxScreenRow;
+    }
+
+    public int getMaxScreenColumn() {
+        return maxScreenColumn;
+    }
+
+    public Map getGameMap() {
+        return gameMap;
+    }
+
+    public Collision getCollision() {
+        return collision;
     }
 
     private void setButtonParameters() {
@@ -240,68 +265,74 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public void update(){
         if(gameOver) return;
+        player.update();
+        boolean a = false;
+        if(!a){
 
-        int leftPlayerX = playerX;
-        int rightPlayerX = playerX + tileSize; // x pos + width
-        int topPlayerY = playerY;
-        int bottomPlayerY = playerY + tileSize; //y pos + height
+        }else {
 
-        int leftPlayerCol = leftPlayerX / tileSize;
-        int rightPlayerCol = rightPlayerX / tileSize;
-        int topPlayerRow = topPlayerY / tileSize;
-        int bottomPlayerRow = bottomPlayerY / tileSize;
+            int leftPlayerX = playerX;
+            int rightPlayerX = playerX + tileSize; // x pos + width
+            int topPlayerY = playerY;
+            int bottomPlayerY = playerY + tileSize; //y pos + height
 
-        int leftBulletX = bulletX;
-        int rightBulletX = bulletX + tileSize; // x pos + width
-        int topBulletY = bulletY;
-        int bottomBulletY = bulletY + tileSize; //y pos + height
+            int leftPlayerCol = leftPlayerX / tileSize;
+            int rightPlayerCol = rightPlayerX / tileSize;
+            int topPlayerRow = topPlayerY / tileSize;
+            int bottomPlayerRow = bottomPlayerY / tileSize;
 
-        int leftBulletCol = leftBulletX / tileSize;
-        int rightBulletCol = rightBulletX / tileSize;
-        int topBulletRow = topBulletY / tileSize;
-        int bottomBulletRow = bottomBulletY / tileSize;
+            int leftBulletX = bulletX;
+            int rightBulletX = bulletX + tileSize; // x pos + width
+            int topBulletY = bulletY;
+            int bottomBulletY = bulletY + tileSize; //y pos + height
 
-        int enemyLeftBulletX = enemyBulletX;
-        int enemyRightBulletX = enemyBulletX + tileSize; // x pos + width
-        int enemyTopBulletY = enemyBulletY;
-        int enemyBottomBulletY = enemyBulletY + tileSize; //y pos + height
+            int leftBulletCol = leftBulletX / tileSize;
+            int rightBulletCol = rightBulletX / tileSize;
+            int topBulletRow = topBulletY / tileSize;
+            int bottomBulletRow = bottomBulletY / tileSize;
 
-        int enemyLeftBulletCol = enemyLeftBulletX / tileSize;
-        int enemyRightBulletCol = enemyRightBulletX / tileSize;
-        int enemyTopBulletRow = enemyTopBulletY / tileSize;
-        int enemyBottomBulletRow = enemyBottomBulletY / tileSize;
+            int enemyLeftBulletX = enemyBulletX;
+            int enemyRightBulletX = enemyBulletX + tileSize; // x pos + width
+            int enemyTopBulletY = enemyBulletY;
+            int enemyBottomBulletY = enemyBulletY + tileSize; //y pos + height
 
-        playerRectangle.x = playerX + playerRectangle.x;
-        playerRectangle.y = playerY + playerRectangle.y;
+            int enemyLeftBulletCol = enemyLeftBulletX / tileSize;
+            int enemyRightBulletCol = enemyRightBulletX / tileSize;
+            int enemyTopBulletRow = enemyTopBulletY / tileSize;
+            int enemyBottomBulletRow = enemyBottomBulletY / tileSize;
 
-        enemyRectangle.x = enemy1X + enemyRectangle.x;
-        enemyRectangle.y = enemy1Y + enemyRectangle.y;
+            playerRectangle.x = playerX + playerRectangle.x;
+            playerRectangle.y = playerY + playerRectangle.y;
 
-        enemy2Rectangle.x = enemy2X + enemy2Rectangle.x;
-        enemy2Rectangle.y = enemy2Y + enemy2Rectangle.y;
+            enemyRectangle.x = enemy1X + enemyRectangle.x;
+            enemyRectangle.y = enemy1Y + enemyRectangle.y;
 
-        playerBulletRectangle.x = bulletX + playerBulletRectangle.x;
-        playerBulletRectangle.y = bulletY + playerBulletRectangle.y;
+            enemy2Rectangle.x = enemy2X + enemy2Rectangle.x;
+            enemy2Rectangle.y = enemy2Y + enemy2Rectangle.y;
 
-        enemy1BulletRectangle.x = enemyBulletX + enemy1BulletRectangle.x;
-        enemy1BulletRectangle.y = enemyBulletY + enemy1BulletRectangle.y;
+            playerBulletRectangle.x = bulletX + playerBulletRectangle.x;
+            playerBulletRectangle.y = bulletY + playerBulletRectangle.y;
 
-        enemy2BulletRectangle.x = enemyBulletX + enemy2BulletRectangle.x;
-        enemy2BulletRectangle.y = enemyBulletY + enemy2BulletRectangle.y;
+            enemy1BulletRectangle.x = enemyBulletX + enemy1BulletRectangle.x;
+            enemy1BulletRectangle.y = enemyBulletY + enemy1BulletRectangle.y;
 
-        movePlayer(leftPlayerX, rightPlayerX, topPlayerY, bottomPlayerY, leftPlayerCol, rightPlayerCol, topPlayerRow, bottomPlayerRow);
+            enemy2BulletRectangle.x = enemyBulletX + enemy2BulletRectangle.x;
+            enemy2BulletRectangle.y = enemyBulletY + enemy2BulletRectangle.y;
 
-        moveEnemies();
+            movePlayer(leftPlayerX, rightPlayerX, topPlayerY, bottomPlayerY, leftPlayerCol, rightPlayerCol, topPlayerRow, bottomPlayerRow);
 
-        checkCollisionBetweenPlayerAndEnemy();
+            moveEnemies();
 
-        checkCollisionOfPlayerBullet(leftBulletX, rightBulletX, topBulletY, bottomBulletY, leftBulletCol, rightBulletCol, topBulletRow, bottomBulletRow);
+            checkCollisionBetweenPlayerAndEnemy();
 
-        checkCollisionOfEnemyBullet(enemyLeftBulletX, enemyRightBulletX, enemyTopBulletY, enemyBottomBulletY, enemyLeftBulletCol, enemyRightBulletCol, enemyTopBulletRow, enemyBottomBulletRow);
+            checkCollisionOfPlayerBullet(leftBulletX, rightBulletX, topBulletY, bottomBulletY, leftBulletCol, rightBulletCol, topBulletRow, bottomBulletRow);
 
-        checkIfEnemySeeThePlayer();
+            checkCollisionOfEnemyBullet(enemyLeftBulletX, enemyRightBulletX, enemyTopBulletY, enemyBottomBulletY, enemyLeftBulletCol, enemyRightBulletCol, enemyTopBulletRow, enemyBottomBulletRow);
 
-        setDefaultRectangleValues();
+            checkIfEnemySeeThePlayer();
+
+            setDefaultRectangleValues();
+        }
     }
 
     private void setDefaultRectangleValues() {
@@ -726,9 +757,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             showPlayAgainButton();
             showQuitButton();
         }else {
-            g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
-
-            drawGameMap(g);
+            player.paint(g);
+            gameMap.paint(g);
+            //drawGameMap(g);
+            //g.drawImage(berzerkPlayerImage, playerX, playerY, tileSize, tileSize, null);
 
             if (keyHandler.bulletActive)
                 g.drawImage(bulletImage, bulletX, bulletY, tileSize, tileSize, null);
