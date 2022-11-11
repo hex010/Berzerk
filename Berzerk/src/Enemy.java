@@ -60,18 +60,31 @@ public class Enemy {
     }
 
     public void update(){
+        if(gamePanel.getCollision().checkEnemyCollisionWithPlayer(this, gamePanel.player)){
+            gamePanel.setGameOver(true);
+            return;
+        }
+
         if(!mustRotate){
             if(!gamePanel.getCollision().checkEnemyCollisionWithTile(this))
-                positionX -= movingSpeed;
+                moveLeft();
             else mustRotate = true;
         }else {
             if(!gamePanel.getCollision().checkEnemyCollisionWithTile(this))
-                positionX += movingSpeed;
+                moveRight();
             else mustRotate = false;
         }
 
         if(!bullet.isActive())
             checkIfIseeThePlayer();
+    }
+
+    private void moveRight() {
+        positionX += movingSpeed;
+    }
+
+    private void moveLeft() {
+        positionX -= movingSpeed;
     }
 
     private void checkIfIseeThePlayer() {

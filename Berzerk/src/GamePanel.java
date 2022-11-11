@@ -22,11 +22,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     final int oneSecondInNanoTime = 1000000000;
     Thread gameThread;
     KeyHandler keyHandler = new KeyHandler();
-    Player player = new Player(this, keyHandler);
     Map gameMap = new Map(this);
+    ArrayList<Enemy> enemies = new ArrayList<>();
+    Player player = new Player(this, keyHandler);
     Collision collision = new Collision(this);
     ArrayList<Bullet> bullets = new ArrayList<>();
-    ArrayList<Enemy> enemies = new ArrayList<>();
+
 
     Random random = new Random();
     int[] enemyPositionsX = new int[7];
@@ -140,6 +141,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         return collision;
     }
 
+    public void setGameOver(Boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
     private void setButtonParameters() {
         playAgainButton = new JButton();
         playAgainButton.addActionListener(this);
@@ -250,7 +255,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         enemyPositionsY[3] = 11 * tileSize;
 
         enemyPositionsX[4] = 9 * tileSize;
-        enemyPositionsY[4] = 4 * tileSize;
+        enemyPositionsY[4] = 3 * tileSize;
 
         enemyPositionsX[5] = 3 * tileSize;
         enemyPositionsY[5] = 18 * tileSize;
@@ -852,24 +857,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     }
 
     private void setDefaultGameRules() {
-        playerX = 150;
-        playerY = 150;
+        player = new Player(this, keyHandler);
         playAgainButton.setVisible(false);
         quitGameButton.setVisible(false);
-        keyHandler.bulletActive = false;
-        keyHandler.bulletDirectionUp = false;
-        keyHandler.bulletDirectionLeft = false;
-        keyHandler.bulletDirectionDown = false;
-        keyHandler.bulletDirectionRight = false;
-        enemyBulletActive = false;
-        enemyBulletDirectionRight = false;
-        enemyBulletDirectionLeft = false;
-        enemyBulletDirectionDown = false;
-        enemyBulletDirectionUp = false;
-        enemy1X = 3 * tileSize;
-        enemy1Y = 18 * tileSize;
-        enemy2X = 15 * tileSize;
-        enemy2Y = 3 * tileSize;
         score = 0;
         gameOver = false;
     }

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Collision {
     private GamePanel gamePanel;
 
@@ -22,36 +24,36 @@ public class Collision {
 
                 if(!gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
                         !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision())
-                    return false;
+                    return true;
                 else
-                    return  true;
+                    return false;
             }
             case DOWN: {
                 bottomPlayerRow = (bottomPlayerY + player.getMovingSpeed()) / gamePanel.getTileSize();
 
                 if(!gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision() &&
                         !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision())
-                    return false;
+                    return true;
                 else
-                    return  true;
+                    return false;
             }
             case LEFT: {
                 leftPlayerCol = (leftPlayerX - player.getMovingSpeed()) / gamePanel.getTileSize();
 
                 if(!gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
                         !gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision())
-                    return false;
+                    return true;
                 else
-                    return  true;
+                    return  false;
             }
             case RIGHT: {
                 rightPlayerCol = (rightPlayerX + player.getMovingSpeed()) /  gamePanel.getTileSize();
 
                 if(!gamePanel.getGameMap().tiles[topPlayerRow][rightPlayerCol].isHasCollision() &&
                         !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision())
-                    return false;
+                    return true;
                 else
-                    return  true;
+                    return false;
             }
         }
 
@@ -139,5 +141,93 @@ public class Collision {
             else
                 return  true;
         }
+    }
+
+    public boolean checkPlayerCollisionWithEnemy(Player player, ArrayList<Enemy> enemies) {
+        for(Enemy enemy : enemies){
+            if(enemy != null) {
+                enemy.rectangle.x += enemy.getPositionX();
+                enemy.rectangle.y += enemy.getPositionY();
+
+                player.rectangle.x += player.getPositionX();
+                player.rectangle.y += player.getPositionY();
+
+                switch (player.getDirection()){
+                    case UP -> {
+                        player.rectangle.y -= player.getMovingSpeed();
+                        if (player.rectangle.intersects(enemy.rectangle)){
+                            return true;
+                        }
+                    }
+                    case DOWN -> {
+                        player.rectangle.y += player.getMovingSpeed();
+                        if (player.rectangle.intersects(enemy.rectangle)) {
+                            return true;
+                        }
+                    }
+                    case LEFT -> {
+                        player.rectangle.x -= player.getMovingSpeed();
+                        if (player.rectangle.intersects(enemy.rectangle)) {
+                            return true;
+                        }
+                    }
+                    case RIGHT -> {
+                        player.rectangle.x += player.getMovingSpeed();
+                        if (player.rectangle.intersects(enemy.rectangle)) {
+                            return true;
+                        }
+                    }
+                }
+                setDefaultPlayerAndEnemyRectangle(player, enemy);
+            }
+        }
+        return false;
+    }
+
+    public boolean checkEnemyCollisionWithPlayer(Enemy enemy, Player player) {
+        if(player != null) {
+            enemy.rectangle.x += enemy.getPositionX();
+            enemy.rectangle.y += enemy.getPositionY();
+
+            player.rectangle.x += player.getPositionX();
+            player.rectangle.y += player.getPositionY();
+
+            switch (player.getDirection()){
+                case UP -> {
+                    enemy.rectangle.y -= enemy.getMovingSpeed();
+                    if (enemy.rectangle.intersects(player.rectangle)){
+                        return true;
+                    }
+                }
+                case DOWN -> {
+                    enemy.rectangle.y += enemy.getMovingSpeed();
+                    if (enemy.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+                case LEFT -> {
+                    enemy.rectangle.x -= enemy.getMovingSpeed();
+                    if (enemy.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+                case RIGHT -> {
+                    enemy.rectangle.x += enemy.getMovingSpeed();
+                    if (enemy.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+            }
+            setDefaultPlayerAndEnemyRectangle(player, enemy);
+        }
+        return false;
+    }
+
+    private void setDefaultPlayerAndEnemyRectangle(Player player, Enemy enemy) {
+        player.rectangle.x = 0;
+        player.rectangle.y = 0;
+
+        enemy.rectangle.x = 0;
+        enemy.rectangle.y = 0;
     }
 }

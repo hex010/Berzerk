@@ -12,9 +12,10 @@ public class Player {
     private KeyHandler keyHandler;
     private Bullet bullet;
     private BufferedImage bufferedImage;
-    private Rectangle rectangle;
+    Rectangle rectangle;
 
     private Direction direction;
+    boolean canMove;
 
     public int getPositionX() {
         return positionX;
@@ -53,6 +54,8 @@ public class Player {
         positionY = 150;
         movingSpeed = 3;
         bullet = new Bullet(gamePanel);
+        direction = Direction.RIGHT;
+        canMove = false;
     }
 
     private void setImage() {
@@ -64,31 +67,77 @@ public class Player {
     }
 
     public void update(){
+
         if(keyHandler.upPressed){
             direction = Direction.UP;
-
-            if(!gamePanel.getCollision().checkPlayerCollisionWithTile(this))
-                positionY -= movingSpeed;
+            canMove = gamePanel.getCollision().checkPlayerCollisionWithTile(this);
+            if(gamePanel.getCollision().checkPlayerCollisionWithEnemy(this, gamePanel.enemies)){
+                gamePanel.setGameOver(true);
+                return;
+            }
+            if(canMove)  makeMove();
         } else if(keyHandler.downPressed){
             direction = Direction.DOWN;
-
-            if(!gamePanel.getCollision().checkPlayerCollisionWithTile(this))
-                positionY += movingSpeed;
+            canMove = gamePanel.getCollision().checkPlayerCollisionWithTile(this);
+            if(gamePanel.getCollision().checkPlayerCollisionWithEnemy(this, gamePanel.enemies)){
+                gamePanel.setGameOver(true);
+                return;
+            }
+            if(canMove)  makeMove();
         } else if(keyHandler.leftPressed){
             direction = Direction.LEFT;
-
-            if(!gamePanel.getCollision().checkPlayerCollisionWithTile(this))
-                positionX -= movingSpeed;
+            canMove = gamePanel.getCollision().checkPlayerCollisionWithTile(this);
+            if(gamePanel.getCollision().checkPlayerCollisionWithEnemy(this, gamePanel.enemies)){
+                gamePanel.setGameOver(true);
+                return;
+            }
+            if(canMove)  makeMove();
         } else if(keyHandler.rightPressed){
             direction = Direction.RIGHT;
-
-            if(!gamePanel.getCollision().checkPlayerCollisionWithTile(this))
-                positionX += movingSpeed;
+            canMove = gamePanel.getCollision().checkPlayerCollisionWithTile(this);
+            if(gamePanel.getCollision().checkPlayerCollisionWithEnemy(this, gamePanel.enemies)){
+                gamePanel.setGameOver(true);
+                return;
+            }
+            if(canMove)  makeMove();
         } else if(keyHandler.shootPressed && !bullet.isActive()){
             bullet.setBullet(positionX, positionY, direction, true);
             gamePanel.bullets.add(bullet);
         }
+    }
 
+
+    private void makeMove() {
+        switch (direction) {
+            case UP -> {
+                moveUp();
+            }
+            case DOWN -> {
+                moveDown();
+            }
+            case LEFT -> {
+                moveLeft();
+            }
+            case RIGHT -> {
+                moveRight();
+            }
+        }
+    }
+
+    private void moveRight() {
+        positionX += movingSpeed;
+    }
+
+    private void moveLeft() {
+        positionX -= movingSpeed;
+    }
+
+    private void moveDown() {
+        positionY += movingSpeed;
+    }
+
+    private void moveUp() {
+        positionY -= movingSpeed;
     }
 
     public void paint(Graphics g){
