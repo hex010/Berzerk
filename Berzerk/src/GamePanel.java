@@ -858,6 +858,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     private void setDefaultGameRules() {
         player = new Player(this, keyHandler);
+        bullets.clear();
+        enemies.clear();
+        addEnemies();
         playAgainButton.setVisible(false);
         quitGameButton.setVisible(false);
         score = 0;

@@ -95,7 +95,7 @@ public class Enemy {
             else{
                 bulletDirection = Direction.UP;
             }
-            bullet.setBullet(positionX, positionY, bulletDirection, true);
+            bullet.setBullet(positionX, positionY, bulletDirection, true, false);
             gamePanel.bullets.add(bullet);
         }
         if(gamePanel.getPlayer().getPositionY() / gamePanel.getTileSize() == positionY / gamePanel.getTileSize()){
@@ -105,7 +105,7 @@ public class Enemy {
             else{
                 bulletDirection = Direction.LEFT;
             }
-            bullet.setBullet(positionX, positionY, bulletDirection, true);
+            bullet.setBullet(positionX, positionY, bulletDirection, true, false);
             gamePanel.bullets.add(bullet);
         }
     }

@@ -223,6 +223,104 @@ public class Collision {
         return false;
     }
 
+    public boolean checkBulletWithPlayerCollision(Bullet bullet, Player player) {
+        if(player != null) {
+            bullet.rectangle.x += bullet.getPositionX();
+            bullet.rectangle.y += bullet.getPositionY();
+
+            player.rectangle.x += player.getPositionX();
+            player.rectangle.y += player.getPositionY();
+
+            switch (bullet.getDirection()){
+                case UP -> {
+                    bullet.rectangle.y -= bullet.getMovingSpeed();
+                    if (bullet.rectangle.intersects(player.rectangle)){
+                        return true;
+                    }
+                }
+                case DOWN -> {
+                    bullet.rectangle.y += bullet.getMovingSpeed();
+                    if (bullet.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+                case LEFT -> {
+                    bullet.rectangle.x -= bullet.getMovingSpeed();
+                    if (bullet.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+                case RIGHT -> {
+                    bullet.rectangle.x += bullet.getMovingSpeed();
+                    if (bullet.rectangle.intersects(player.rectangle)) {
+                        return true;
+                    }
+                }
+            }
+            setDefaultBulletAndPlayerRectangle(bullet, player);
+        }
+        return false;
+    }
+
+    public int checkBulletWithEnemyCollision(Bullet bullet, ArrayList<Enemy> enemies) {
+        int index = -1;
+        for(Enemy enemy : enemies){
+            index++;
+            if(enemy != null) {
+                enemy.rectangle.x += enemy.getPositionX();
+                enemy.rectangle.y += enemy.getPositionY();
+
+                bullet.rectangle.x += bullet.getPositionX();
+                bullet.rectangle.y += bullet.getPositionY();
+
+                switch (bullet.getDirection()){
+                    case UP -> {
+                        bullet.rectangle.y -= bullet.getMovingSpeed();
+                        if (bullet.rectangle.intersects(enemy.rectangle)){
+                            return index;
+                        }
+                    }
+                    case DOWN -> {
+                        bullet.rectangle.y += bullet.getMovingSpeed();
+                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                            return index;
+                        }
+                    }
+                    case LEFT -> {
+                        bullet.rectangle.x -= bullet.getMovingSpeed();
+                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                            return index;
+                        }
+                    }
+                    case RIGHT -> {
+                        bullet.rectangle.x += bullet.getMovingSpeed();
+                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                            return index;
+                        }
+                    }
+                }
+                setDefaultBulletAndEnemyRectangle(bullet, enemy);
+            }
+        }
+        return -1;
+    }
+
+    private void setDefaultBulletAndPlayerRectangle(Bullet bullet, Player player) {
+        player.rectangle.x = 0;
+        player.rectangle.y = 0;
+
+        bullet.rectangle.x = 0;
+        bullet.rectangle.y = 0;
+    }
+
+    private void setDefaultBulletAndEnemyRectangle(Bullet bullet, Enemy enemy) {
+        enemy.rectangle.x = 0;
+        enemy.rectangle.y = 0;
+
+        bullet.rectangle.x = 0;
+        bullet.rectangle.y = 0;
+    }
+
     private void setDefaultPlayerAndEnemyRectangle(Player player, Enemy enemy) {
         player.rectangle.x = 0;
         player.rectangle.y = 0;

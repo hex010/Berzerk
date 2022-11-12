@@ -12,12 +12,24 @@ public class Bullet {
     private int movingSpeed;
     BufferedImage bulletImage;
     GamePanel gamePanel;
+    Rectangle rectangle;
+    boolean shotByPlayer;
 
     public Bullet(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
         movingSpeed = 7;
         setImage();
-        this.gamePanel = gamePanel;
+        setRectangleValues();
     }
+
+    private void setRectangleValues() {
+        rectangle = new Rectangle();
+        rectangle.x = 0;
+        rectangle.y = 0;
+        rectangle.width = gamePanel.getTileSize();
+        rectangle.height = gamePanel.getTileSize();
+    }
+
     private void setImage() {
         try {
             bulletImage = ImageIO.read(new FileInputStream("resources/bullet.png"));
@@ -26,14 +38,31 @@ public class Bullet {
         }
     }
 
-    public void setBullet(int locationX, int locationY, Direction direction, boolean active) {
+    public void setBullet(int locationX, int locationY, Direction direction, boolean active, boolean shotByPlayer) {
         this.positionX = locationX;
         this.positionY = locationY;
         this.direction = direction;
         this.active = active;
+        this.shotByPlayer = shotByPlayer;
     }
 
     public void update(){
+
+        if(shotByPlayer) {
+            int enemyIndex = gamePanel.getCollision().checkBulletWithEnemyCollision(this, gamePanel.enemies);
+            if (enemyIndex != -1) {
+                gamePanel.score++;
+                gamePanel.enemies.remove(enemyIndex);
+                active = false;
+                return;
+            }
+        }else{
+            if (gamePanel.getCollision().checkBulletWithPlayerCollision(this, gamePanel.getPlayer())) {
+                gamePanel.setGameOver(true);
+                return;
+            }
+        }
+
         switch (direction){
             case UP: {
                 if(!gamePanel.getCollision().checkBulletCollisionWithTile(this))

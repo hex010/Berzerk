@@ -101,7 +101,7 @@ public class Player {
             }
             if(canMove)  makeMove();
         } else if(keyHandler.shootPressed && !bullet.isActive()){
-            bullet.setBullet(positionX, positionY, direction, true);
+            bullet.setBullet(positionX, positionY, direction, true, true);
             gamePanel.bullets.add(bullet);
         }
     }
