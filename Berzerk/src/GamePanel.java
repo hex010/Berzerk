@@ -14,11 +14,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private final int maxScreenRow = 22;
     private final int screenWidth = tileSize * maxScreenColumn;
     private final int screenHeight = tileSize * maxScreenRow;
-    private final int fpsCount = 60;
-    private final int oneSecondInNanoTime = 1000000000;
     private Thread gameThread;
 
-    private KeyHandler keyHandler = new KeyHandler();;
+    private final KeyHandler keyHandler = new KeyHandler();
     private Map gameMap;
     private Collision collision;
     ArrayList<Character> enemies;
@@ -51,6 +49,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     @Override
     public void run() {
+        int fpsCount = 60;
+        int oneSecondInNanoTime = 1000000000;
         double drawInterval = oneSecondInNanoTime / (double) fpsCount;
         double delta = 0;
         long lastTime = System.nanoTime();

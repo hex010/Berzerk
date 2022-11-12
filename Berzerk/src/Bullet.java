@@ -50,10 +50,6 @@ public class Bullet {
         return rectangle;
     }
 
-    public void setRectangle(Rectangle rectangle) {
-        this.rectangle = rectangle;
-    }
-
     public void update(){
 
         if(shotByPlayer) {
@@ -73,30 +69,26 @@ public class Bullet {
             }
         }
 
-        switch (direction){
-            case UP: {
-                if(!gamePanel.getCollision().checkBulletCollisionWithTile(this))
+        switch (direction) {
+            case UP -> {
+                if (!gamePanel.getCollision().checkBulletCollisionWithTile(this))
                     positionY -= movingSpeed;
                 else active = false;
-                break;
             }
-            case DOWN: {
-                if(!gamePanel.getCollision().checkBulletCollisionWithTile(this))
+            case DOWN -> {
+                if (!gamePanel.getCollision().checkBulletCollisionWithTile(this))
                     positionY += movingSpeed;
                 else active = false;
-                break;
             }
-            case LEFT: {
-                if(!gamePanel.getCollision().checkBulletCollisionWithTile(this))
+            case LEFT -> {
+                if (!gamePanel.getCollision().checkBulletCollisionWithTile(this))
                     positionX -= movingSpeed;
                 else active = false;
-                break;
             }
-            case RIGHT: {
-                if(!gamePanel.getCollision().checkBulletCollisionWithTile(this))
+            case RIGHT -> {
+                if (!gamePanel.getCollision().checkBulletCollisionWithTile(this))
                     positionX += movingSpeed;
                 else active = false;
-                break;
             }
         }
     }
@@ -120,7 +112,6 @@ public class Bullet {
     public boolean isActive() {
         return active;
     }
-
 
     public int getMovingSpeed() {
         return movingSpeed;

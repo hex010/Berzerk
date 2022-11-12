@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Collision {
-    private GamePanel gamePanel;
+    private final GamePanel gamePanel;
 
     public Collision(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -24,7 +24,7 @@ public class Collision {
                 topPlayerRow = (topPlayerY - character.getMovingSpeed()) / gamePanel.getTileSize();
 
                 return !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision();
+                        !gamePanel.getGameMap().tiles[topPlayerRow][rightPlayerCol].isHasCollision();
             }
             case DOWN -> {
                 bottomPlayerRow = (bottomPlayerY + character.getMovingSpeed()) / gamePanel.getTileSize();

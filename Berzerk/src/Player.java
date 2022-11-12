@@ -1,11 +1,10 @@
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Player extends Character {
-    private KeyHandler keyHandler;
+    private final KeyHandler keyHandler;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         super(gamePanel);
@@ -33,7 +32,7 @@ public class Player extends Character {
 
     @Override
     public void update(){
-        if(keyHandler.upPressed){
+        if(keyHandler.isUpPressed()){
             direction = Direction.UP;
             canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
             if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
@@ -41,7 +40,7 @@ public class Player extends Character {
                 return;
             }
             if(canMove)  moveUp();
-        } else if(keyHandler.downPressed){
+        } else if(keyHandler.isDownPressed()){
             direction = Direction.DOWN;
             canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
             if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
@@ -49,7 +48,7 @@ public class Player extends Character {
                 return;
             }
             if(canMove)  moveDown();
-        } else if(keyHandler.leftPressed){
+        } else if(keyHandler.isLeftPressed()){
             direction = Direction.LEFT;
             canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
             if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
@@ -57,7 +56,7 @@ public class Player extends Character {
                 return;
             }
             if(canMove)  moveLeft();
-        } else if(keyHandler.rightPressed){
+        } else if(keyHandler.isRightPressed()){
             direction = Direction.RIGHT;
             canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
             if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
@@ -65,7 +64,7 @@ public class Player extends Character {
                 return;
             }
             if(canMove)  moveRight();
-        } else if(keyHandler.shootPressed && !bullet.isActive()){
+        } else if(keyHandler.isShootPressed() && !bullet.isActive()){
             bullet.setBullet(positionX, positionY, direction, true, true);
             gamePanel.bullets.add(bullet);
         }

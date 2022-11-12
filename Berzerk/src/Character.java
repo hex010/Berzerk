@@ -46,41 +46,22 @@ abstract public class Character {
         return positionX;
     }
 
-    public void setPositionX(int positionX) {
-        this.positionX = positionX;
-    }
-
     public int getPositionY() {
         return positionY;
-    }
-
-    public void setPositionY(int positionY) {
-        this.positionY = positionY;
     }
 
     public int getMovingSpeed() {
         return movingSpeed;
     }
 
-    public void setMovingSpeed(int movingSpeed) {
-        this.movingSpeed = movingSpeed;
-    }
-
     public Rectangle getMyRectangle() {
         return myRectangle;
-    }
-
-    public void setMyRectangle(Rectangle myRectangle) {
-        this.myRectangle = myRectangle;
     }
 
     public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
 
     public void update() {
 

@@ -41,19 +41,11 @@ public class Map {
     }
 
     private void addTile(int x, int y, int i, int j, int tileType) throws IOException {
-        switch (tileType){
-            case 0: {
-                tiles[i][j] = new Tile(x, y, tileType, null, false);
-                break;
-            }
-            case 1: {
-                BufferedImage tileImage = ImageIO.read(new FileInputStream("resources/wall.bmp"));
-                tiles[i][j] = new Tile(x, y, tileType, tileImage, true);
-                break;
-            }
-            default: {
-                tiles[i][j] = new Tile(x, y, 0, null, false);
-            }
+        if (tileType == 1) {
+            BufferedImage tileImage = ImageIO.read(new FileInputStream("resources/wall.bmp"));
+            tiles[i][j] = new Tile(x, y, tileImage, true);
+        } else {
+            tiles[i][j] = new Tile(x, y, null, false);
         }
     }
 

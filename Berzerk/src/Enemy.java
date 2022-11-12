@@ -1,16 +1,18 @@
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Enemy extends Character {
-
     public Enemy(GamePanel gamePanel) {
         super(gamePanel);
+        setDefaultValues();
+        setImage();
+    }
+
+    private void setDefaultValues() {
         movingSpeed = 2;
         direction = Direction.RIGHT;
-        setImage();
         bullet = new Bullet(gamePanel);
     }
 
@@ -34,6 +36,13 @@ public class Enemy extends Character {
             return;
         }
         canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
+        makeMove();
+
+        if(!bullet.isActive())
+            checkIfIseeThePlayer();
+    }
+
+    private void makeMove() {
         if(canMove){
             if(direction == Direction.LEFT)
                 moveLeft();
@@ -46,9 +55,6 @@ public class Enemy extends Character {
             else
                 direction = Direction.LEFT;
         }
-
-        if(!bullet.isActive())
-            checkIfIseeThePlayer();
     }
 
     private void checkIfIseeThePlayer() {

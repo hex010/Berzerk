@@ -1,17 +1,12 @@
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class KeyHandler implements KeyListener {
-    public boolean upPressed;
-    public boolean downPressed;
-    public boolean leftPressed;
-    public boolean rightPressed;
-    public boolean shootPressed;
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+public class KeyHandler extends KeyAdapter {
+    private boolean upPressed;
+    private boolean downPressed;
+    private boolean leftPressed;
+    private boolean rightPressed;
+    private boolean shootPressed;
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -45,5 +40,25 @@ public class KeyHandler implements KeyListener {
         }else if(keyCode == KeyEvent.VK_SPACE){
             shootPressed = false;
         }
+    }
+
+    public boolean isUpPressed() {
+        return upPressed;
+    }
+
+    public boolean isDownPressed() {
+        return downPressed;
+    }
+
+    public boolean isLeftPressed() {
+        return leftPressed;
+    }
+
+    public boolean isRightPressed() {
+        return rightPressed;
+    }
+
+    public boolean isShootPressed() {
+        return shootPressed;
     }
 }
