@@ -51,8 +51,9 @@ public class Bullet {
         if(shotByPlayer) {
             int enemyIndex = gamePanel.getCollision().checkBulletWithEnemyCollision(this, gamePanel.enemies);
             if (enemyIndex != -1) {
-                gamePanel.score++;
+                gamePanel.setScore(gamePanel.getScore() + 1);
                 gamePanel.enemies.remove(enemyIndex);
+                gamePanel.addNewEnemy();
                 active = false;
                 return;
             }

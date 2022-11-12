@@ -141,6 +141,6 @@ public class Player {
     }
 
     public void paint(Graphics g){
-        g.drawImage(bufferedImage, positionX, positionY, gamePanel.tileSize, gamePanel.tileSize, null);
+        g.drawImage(bufferedImage, positionX, positionY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
     }
 }
