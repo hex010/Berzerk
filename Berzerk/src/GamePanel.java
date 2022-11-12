@@ -41,6 +41,62 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         setDefaultGameValues();
     }
 
+    public void update(){
+        if(gameOver) return;
+        player.update();
+
+        updateBullets();
+        updateEnemies();
+    }
+
+    @Override
+    public void run() {
+        double drawInterval = oneSecondInNanoTime / (double) fpsCount;
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+
+        while (gameThread != null){
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            lastTime = currentTime;
+
+            if(delta >= 1){
+                update();
+                repaint();
+                delta--;
+            }
+        }
+    }
+
+    public void paint(Graphics g){
+        super.paint(g);
+
+        showScoreLabel(g);
+
+        if(gameOver){
+            showGameOverLabel(g);
+            showPlayAgainButton();
+            showQuitButton();
+        }else {
+            player.paint(g);
+            gameMap.paint(g);
+            paintBullets(g);
+            paintEnemies(g);
+        }
+
+        g.dispose();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(Objects.equals(e.getActionCommand(), "Play again")){
+            setDefaultGameValues();
+        } else if(Objects.equals(e.getActionCommand(), "Quit")){
+            System.exit(0);
+        }
+    }
+
     private void setDefaultGameValues() {
         gameMap = new Map(this);
         collision = new Collision(this);
@@ -73,6 +129,125 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         Enemy enemy = new Enemy(this);
         enemy.setEnemy(enemyPositionsX[randomPosition], enemyPositionsY[randomPosition]);
         return enemy;
+    }
+
+    private void setButtonParameters() {
+        setPlayAgainButtonParameters();
+        setQuitGameButtonParameters();
+    }
+
+    private void setQuitGameButtonParameters() {
+        quitGameButton = new JButton();
+        quitGameButton.addActionListener(this);
+        quitGameButton.setVisible(false);
+        this.add(quitGameButton);
+    }
+
+    private void setPlayAgainButtonParameters() {
+        playAgainButton = new JButton();
+        playAgainButton.addActionListener(this);
+        playAgainButton.setVisible(false);
+        this.add(playAgainButton);
+    }
+
+    private void setWindowParameters() {
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setBackground(Color.BLACK);
+        this.setDoubleBuffered(true);
+        this.addKeyListener(keyHandler);
+        this.setFocusable(true);
+    }
+
+    private void setEnemyPositionsArrayValues() {
+        enemyPositionsX[0] = 9 * tileSize;
+        enemyPositionsY[0] = 12 * tileSize;
+
+        enemyPositionsX[1] = 19 * tileSize;
+        enemyPositionsY[1] = 19 * tileSize;
+
+        enemyPositionsX[2] = 13 * tileSize;
+        enemyPositionsY[2] = 19 * tileSize;
+
+        enemyPositionsX[3] = 21 * tileSize;
+        enemyPositionsY[3] = 11 * tileSize;
+
+        enemyPositionsX[4] = 9 * tileSize;
+        enemyPositionsY[4] = 3 * tileSize;
+
+        enemyPositionsX[5] = 3 * tileSize;
+        enemyPositionsY[5] = 18 * tileSize;
+
+        enemyPositionsX[6] = 15 * tileSize;
+        enemyPositionsY[6] = 3 * tileSize;
+    }
+
+    private void updateBullets() {
+        for(int i = 0; i < bullets.size(); i++){
+            if(bullets.get(i) != null){
+                if(bullets.get(i).isActive()){
+                    bullets.get(i).update();
+                }else{
+                    bullets.remove(i);
+                }
+            }
+        }
+    }
+
+    private void updateEnemies() {
+        for(int i = 0; i < enemies.size(); i++){
+            if(enemies.get(i) != null){
+                enemies.get(i).update();
+            }
+        }
+    }
+
+    private void paintEnemies(Graphics g) {
+        for (Enemy enemy : enemies) {
+            if (enemy != null) {
+                enemy.paint(g);
+            }
+        }
+    }
+
+    private void paintBullets(Graphics g) {
+        for (Bullet bullet : bullets) {
+            if (bullet != null) {
+                bullet.paint(g);
+            }
+        }
+    }
+
+    private void showScoreLabel(Graphics g) {
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font("MS Mincho", Font.PLAIN, 20));
+        g.drawString("Score: "+ score, 50, screenHeight-50);
+    }
+
+    private void showQuitButton() {
+        quitGameButton.setText("Quit");
+        quitGameButton.setSize(100, 50);
+        quitGameButton.setLocation(screenWidth/3 + 100, screenHeight/3 + 120);
+        quitGameButton.setBackground(Color.white);
+        quitGameButton.setVisible(true);
+    }
+
+    private void showPlayAgainButton() {
+        playAgainButton.setText("Play again");
+        playAgainButton.setSize(200, 50);
+        playAgainButton.setLocation(screenWidth/3 + 50, screenHeight/3 + 50);
+        playAgainButton.setBackground(Color.white);
+        playAgainButton.setVisible(true);
+    }
+
+    private void showGameOverLabel(Graphics g) {
+        g.setColor(Color.red);
+        g.setFont(new Font("MS Mincho", Font.PLAIN, 50));
+        g.drawString("GAME OVER", screenWidth/3, screenHeight/3);
+    }
+
+    public void startGameThread(){
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     public int getScore() {
@@ -109,160 +284,5 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public void setGameOver(Boolean gameOver) {
         this.gameOver = gameOver;
-    }
-
-    private void setButtonParameters() {
-        playAgainButton = new JButton();
-        playAgainButton.addActionListener(this);
-        playAgainButton.setVisible(false);
-        this.add(playAgainButton);
-
-        quitGameButton = new JButton();
-        quitGameButton.addActionListener(this);
-        quitGameButton.setVisible(false);
-        this.add(quitGameButton);
-    }
-
-    private void setWindowParameters() {
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.BLACK);
-        this.setDoubleBuffered(true);
-        this.addKeyListener(keyHandler);
-        this.setFocusable(true);
-    }
-
-    private void setEnemyPositionsArrayValues() {
-        enemyPositionsX[0] = 9 * tileSize;
-        enemyPositionsY[0] = 12 * tileSize;
-
-        enemyPositionsX[1] = 19 * tileSize;
-        enemyPositionsY[1] = 19 * tileSize;
-
-        enemyPositionsX[2] = 13 * tileSize;
-        enemyPositionsY[2] = 19 * tileSize;
-
-        enemyPositionsX[3] = 21 * tileSize;
-        enemyPositionsY[3] = 11 * tileSize;
-
-        enemyPositionsX[4] = 9 * tileSize;
-        enemyPositionsY[4] = 3 * tileSize;
-
-        enemyPositionsX[5] = 3 * tileSize;
-        enemyPositionsY[5] = 18 * tileSize;
-
-        enemyPositionsX[6] = 15 * tileSize;
-        enemyPositionsY[6] = 3 * tileSize;
-    }
-
-    @Override
-    public void run() {
-        double drawInterval = oneSecondInNanoTime / (double) fpsCount;
-        double delta = 0;
-        long lastTime = System.nanoTime();
-        long currentTime;
-
-        while (gameThread != null){
-            currentTime = System.nanoTime();
-            delta += (currentTime - lastTime) / drawInterval;
-            lastTime = currentTime;
-
-            if(delta >= 1){
-                update();
-                repaint();
-                delta--;
-            }
-        }
-    }
-
-    public void update(){
-        if(gameOver) return;
-        player.update();
-
-        for(int i = 0; i < bullets.size(); i++){
-            if(bullets.get(i) != null){
-                if(bullets.get(i).isActive()){
-                    bullets.get(i).update();
-                }else{
-                    bullets.remove(i);
-                }
-            }
-        }
-
-        for(int i = 0; i < enemies.size(); i++){
-            if(enemies.get(i) != null){
-                enemies.get(i).update();
-            }
-        }
-    }
-
-    public void paint(Graphics g){
-        super.paint(g);
-
-        showScoreLabel(g);
-
-        if(gameOver){
-            showGameOverLabel(g);
-            showPlayAgainButton();
-            showQuitButton();
-        }else {
-            player.paint(g);
-            gameMap.paint(g);
-
-            for (Bullet bullet : bullets) {
-                if (bullet != null) {
-                    bullet.paint(g);
-                }
-            }
-
-            for (Enemy enemy : enemies) {
-                if (enemy != null) {
-                    enemy.paint(g);
-                }
-            }
-        }
-
-        g.dispose();
-    }
-
-    private void showScoreLabel(Graphics g) {
-        g.setColor(Color.YELLOW);
-        g.setFont(new Font("MS Mincho", Font.PLAIN, 20));
-        g.drawString("Score: "+ score, 50, screenHeight-50);
-    }
-
-    private void showQuitButton() {
-        quitGameButton.setText("Quit");
-        quitGameButton.setSize(100, 50);
-        quitGameButton.setLocation(screenWidth/3 + 100, screenHeight/3 + 120);
-        quitGameButton.setBackground(Color.white);
-        quitGameButton.setVisible(true);
-    }
-
-    private void showPlayAgainButton() {
-        playAgainButton.setText("Play again");
-        playAgainButton.setSize(200, 50);
-        playAgainButton.setLocation(screenWidth/3 + 50, screenHeight/3 + 50);
-        playAgainButton.setBackground(Color.white);
-        playAgainButton.setVisible(true);
-    }
-
-    private void showGameOverLabel(Graphics g) {
-        g.setColor(Color.red);
-        g.setFont(new Font("MS Mincho", Font.PLAIN, 50));
-        g.drawString("GAME OVER", screenWidth/3, screenHeight/3);
-    }
-
-    public void startGameThread(){
-        gameThread = new Thread(this);
-        gameThread.start();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(Objects.equals(e.getActionCommand(), "Play again")){
-            setDefaultGameValues();
-        } else if(Objects.equals(e.getActionCommand(), "Quit")){
-            System.exit(0);
-        }
     }
 }

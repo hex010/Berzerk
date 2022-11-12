@@ -19,39 +19,16 @@ public class Tile {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
     }
 
     public BufferedImage getBufferedImage() {
         return bufferedImage;
     }
 
-    public void setBufferedImage(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
-    }
 
     public boolean isHasCollision() {
         return hasCollision;
-    }
-
-    public void setHasCollision(boolean hasCollision) {
-        this.hasCollision = hasCollision;
     }
 }
