@@ -12,7 +12,7 @@ public class Bullet {
     private int movingSpeed;
     BufferedImage bulletImage;
     GamePanel gamePanel;
-    Rectangle rectangle;
+    private Rectangle rectangle;
     boolean shotByPlayer;
 
     public Bullet(GamePanel gamePanel) {
@@ -46,10 +46,18 @@ public class Bullet {
         this.shotByPlayer = shotByPlayer;
     }
 
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+
+    public void setRectangle(Rectangle rectangle) {
+        this.rectangle = rectangle;
+    }
+
     public void update(){
 
         if(shotByPlayer) {
-            int enemyIndex = gamePanel.getCollision().checkBulletWithEnemyCollision(this, gamePanel.enemies);
+            int enemyIndex = gamePanel.getCollision().checkBulletWithCharacters(this, gamePanel.enemies);
             if (enemyIndex != -1) {
                 gamePanel.setScore(gamePanel.getScore() + 1);
                 gamePanel.enemies.remove(enemyIndex);
@@ -58,7 +66,8 @@ public class Bullet {
                 return;
             }
         }else{
-            if (gamePanel.getCollision().checkBulletWithPlayerCollision(this, gamePanel.getPlayer())) {
+            int playerIndex = gamePanel.getCollision().checkBulletWithCharacters(this, gamePanel.players);
+            if (playerIndex != -1) {
                 gamePanel.setGameOver(true);
                 return;
             }

@@ -21,8 +21,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private KeyHandler keyHandler = new KeyHandler();;
     private Map gameMap;
     private Collision collision;
-    ArrayList<Enemy> enemies;
-    Player player;
+    ArrayList<Character> enemies;
+    ArrayList<Character> players;
     ArrayList<Bullet> bullets;
 
 
@@ -43,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     public void update(){
         if(gameOver) return;
-        player.update();
+        players.get(0).update();
 
         updateBullets();
         updateEnemies();
@@ -79,7 +79,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
             showPlayAgainButton();
             showQuitButton();
         }else {
-            player.paint(g);
+            players.get(0).paint(g);
             gameMap.paint(g);
             paintBullets(g);
             paintEnemies(g);
@@ -101,7 +101,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         gameMap = new Map(this);
         collision = new Collision(this);
         enemies = new ArrayList<>();
-        player = new Player(this, keyHandler);
+        players = new ArrayList<>();
         bullets = new ArrayList<>();
         random = new Random();
         enemyPositionsX = new int[7];
@@ -111,6 +111,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         quitGameButton.setVisible(false);
         setEnemyPositionsArrayValues();
         addNewEnemies();
+        players.add(new Player(this, keyHandler));
         gameOver = false;
     }
 
@@ -194,15 +195,15 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     }
 
     private void updateEnemies() {
-        for(int i = 0; i < enemies.size(); i++){
-            if(enemies.get(i) != null){
-                enemies.get(i).update();
+        for (Character enemy : enemies) {
+            if (enemy != null) {
+                enemy.update();
             }
         }
     }
 
     private void paintEnemies(Graphics g) {
-        for (Enemy enemy : enemies) {
+        for (Character enemy : enemies) {
             if (enemy != null) {
                 enemy.paint(g);
             }
@@ -275,7 +276,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     }
 
     public Player getPlayer() {
-        return player;
+        return (Player) players.get(0);
     }
 
     public Collision getCollision() {

@@ -4,54 +4,22 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class Enemy {
-    private int positionX;
-    private int positionY;
-    private int movingSpeed;
-    private boolean mustRotate;
-    private GamePanel gamePanel;
-    Direction bulletDirection;
-    BufferedImage enemyImage;
-    Rectangle rectangle;
-    private Bullet bullet;
+public class Enemy extends Character {
 
     public Enemy(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         movingSpeed = 2;
-        setRectangleValues();
+        direction = Direction.RIGHT;
         setImage();
         bullet = new Bullet(gamePanel);
     }
 
-    public boolean isMustRotate() {
-        return mustRotate;
-    }
-
-    public int getPositionY() {
-        return positionY;
-    }
-
-    public int getPositionX() {
-        return positionX;
-    }
-
-    public int getMovingSpeed() {
-        return movingSpeed;
-    }
-
     private void setImage() {
         try {
-            enemyImage = ImageIO.read(new FileInputStream("resources/enemy.gif"));
+            bufferedImage = ImageIO.read(new FileInputStream("resources/enemy.gif"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    private void setRectangleValues() {
-        rectangle = new Rectangle();
-        rectangle.x = 0;
-        rectangle.y = 0;
-        rectangle.width = gamePanel.getTileSize();
-        rectangle.height = gamePanel.getTileSize();
     }
 
     public void setEnemy(int positionX, int positionY) {
@@ -59,58 +27,52 @@ public class Enemy {
         this.positionY = positionY;
     }
 
+    @Override
     public void update(){
-        if(gamePanel.getCollision().checkEnemyCollisionWithPlayer(this, gamePanel.player)){
+        if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.players)){
             gamePanel.setGameOver(true);
             return;
         }
-
-        if(!mustRotate){
-            if(!gamePanel.getCollision().checkEnemyCollisionWithTile(this))
+        canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
+        if(canMove){
+            if(direction == Direction.LEFT)
                 moveLeft();
-            else mustRotate = true;
-        }else {
-            if(!gamePanel.getCollision().checkEnemyCollisionWithTile(this))
+            else
                 moveRight();
-            else mustRotate = false;
+        }
+        else {
+            if(direction == Direction.LEFT)
+                direction = Direction.RIGHT;
+            else
+                direction = Direction.LEFT;
         }
 
         if(!bullet.isActive())
             checkIfIseeThePlayer();
     }
 
-    private void moveRight() {
-        positionX += movingSpeed;
-    }
-
-    private void moveLeft() {
-        positionX -= movingSpeed;
-    }
-
     private void checkIfIseeThePlayer() {
         if(gamePanel.getPlayer().getPositionX() / gamePanel.getTileSize() == positionX / gamePanel.getTileSize()){
-            if(gamePanel.getPlayer().getPositionY() > positionY) {
-                bulletDirection = Direction.DOWN;
-            }
-            else{
-                bulletDirection = Direction.UP;
-            }
-            bullet.setBullet(positionX, positionY, bulletDirection, true, false);
-            gamePanel.bullets.add(bullet);
+            if(gamePanel.getPlayer().getPositionY() > positionY)
+                shootTowardsThePlayer(Direction.DOWN);
+            else
+                shootTowardsThePlayer(Direction.UP);
         }
         if(gamePanel.getPlayer().getPositionY() / gamePanel.getTileSize() == positionY / gamePanel.getTileSize()){
-            if(gamePanel.getPlayer().getPositionX() > positionX) {
-                bulletDirection = Direction.RIGHT;
-            }
-            else{
-                bulletDirection = Direction.LEFT;
-            }
-            bullet.setBullet(positionX, positionY, bulletDirection, true, false);
-            gamePanel.bullets.add(bullet);
+            if(gamePanel.getPlayer().getPositionX() > positionX)
+                shootTowardsThePlayer(Direction.RIGHT);
+            else
+                shootTowardsThePlayer(Direction.LEFT);
         }
     }
 
+    private void shootTowardsThePlayer(Direction shootDirection) {
+        bullet.setBullet(positionX, positionY, shootDirection, true, false);
+        gamePanel.bullets.add(bullet);
+    }
+
+    @Override
     public void paint(Graphics g){
-        g.drawImage(enemyImage, positionX, positionY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        g.drawImage(bufferedImage, positionX, positionY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
     }
 }

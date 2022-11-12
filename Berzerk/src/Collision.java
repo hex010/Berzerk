@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Collision {
@@ -7,56 +8,89 @@ public class Collision {
         this.gamePanel = gamePanel;
     }
 
-    public boolean checkPlayerCollisionWithTile(Player player){
-        int leftPlayerX = player.getPositionX();
-        int rightPlayerX = player.getPositionX() + gamePanel.getTileSize(); // x pos + width
-        int topPlayerY = player.getPositionY();
-        int bottomPlayerY = player.getPositionY() + gamePanel.getTileSize(); //y pos + height
+    public boolean checkCharacterCollisionWithTile(Character character){
+        int leftPlayerX = character.getPositionX();
+        int rightPlayerX = character.getPositionX() + gamePanel.getTileSize(); // x pos + width
+        int topPlayerY = character.getPositionY();
+        int bottomPlayerY = character.getPositionY() + gamePanel.getTileSize(); //y pos + height
 
         int leftPlayerCol = leftPlayerX / gamePanel.getTileSize();
         int rightPlayerCol = rightPlayerX / gamePanel.getTileSize();
         int topPlayerRow = topPlayerY / gamePanel.getTileSize();
         int bottomPlayerRow = bottomPlayerY / gamePanel.getTileSize();
 
-        switch (player.getDirection()){
-            case UP: {
-                topPlayerRow = (topPlayerY - player.getMovingSpeed()) / gamePanel.getTileSize();
+        switch (character.getDirection()) {
+            case UP -> {
+                topPlayerRow = (topPlayerY - character.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision())
-                    return true;
-                else
-                    return false;
+                return !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision();
             }
-            case DOWN: {
-                bottomPlayerRow = (bottomPlayerY + player.getMovingSpeed()) / gamePanel.getTileSize();
+            case DOWN -> {
+                bottomPlayerRow = (bottomPlayerY + character.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision())
-                    return true;
-                else
-                    return false;
+                return !gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision();
             }
-            case LEFT: {
-                leftPlayerCol = (leftPlayerX - player.getMovingSpeed()) / gamePanel.getTileSize();
+            case LEFT -> {
+                leftPlayerCol = (leftPlayerX - character.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision())
-                    return true;
-                else
-                    return  false;
+                return !gamePanel.getGameMap().tiles[topPlayerRow][leftPlayerCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomPlayerRow][leftPlayerCol].isHasCollision();
             }
-            case RIGHT: {
-                rightPlayerCol = (rightPlayerX + player.getMovingSpeed()) /  gamePanel.getTileSize();
+            case RIGHT -> {
+                rightPlayerCol = (rightPlayerX + character.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topPlayerRow][rightPlayerCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision())
-                    return true;
-                else
-                    return false;
+                return !gamePanel.getGameMap().tiles[topPlayerRow][rightPlayerCol].isHasCollision() &&
+                        !gamePanel.getGameMap().tiles[bottomPlayerRow][rightPlayerCol].isHasCollision();
             }
         }
 
+        return false;
+    }
+
+    public boolean checkCharacterCollisionWithCharacters(Character character, ArrayList<Character> targets) {
+        for (Character target : targets) {
+            if (target != null) {
+
+                Rectangle characterRectangle = character.getMyRectangle();
+                Rectangle characterTargetRectangle = target.getMyRectangle();
+
+                characterRectangle.x += character.getPositionX();
+                characterRectangle.y += character.getPositionY();
+
+                characterTargetRectangle.x += target.getPositionX();
+                characterTargetRectangle.y += target.getPositionY();
+
+                switch (character.getDirection()) {
+                    case UP -> {
+                        characterRectangle.y -= character.getMovingSpeed();
+                        if (characterRectangle.intersects(characterTargetRectangle)) {
+                            return true;
+                        }
+                    }
+                    case DOWN -> {
+                        characterRectangle.y += character.getMovingSpeed();
+                        if (characterRectangle.intersects(characterTargetRectangle)) {
+                            return true;
+                        }
+                    }
+                    case LEFT -> {
+                        characterRectangle.x -= character.getMovingSpeed();
+                        if (characterRectangle.intersects(characterTargetRectangle)) {
+                            return true;
+                        }
+                    }
+                    case RIGHT -> {
+                        characterRectangle.x += character.getMovingSpeed();
+                        if (characterRectangle.intersects(characterTargetRectangle)) {
+                            return true;
+                        }
+                    }
+                }
+                setDefaultCharactersRectangles(characterRectangle, characterTargetRectangle);
+            }
+        }
         return false;
     }
 
@@ -71,261 +105,96 @@ public class Collision {
         int topBulletRow = topBulletY / gamePanel.getTileSize();
         int bottomBulletRow = bottomBulletY / gamePanel.getTileSize();
 
-        switch (bullet.getDirection()){
-            case UP: {
+        switch (bullet.getDirection()) {
+            case UP -> {
                 topBulletRow = (topBulletY - bullet.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision())
-                    return false;
-                else
-                    return  true;
+                return gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() ||
+                        gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision();
             }
-            case DOWN: {
+            case DOWN -> {
                 bottomBulletRow = (bottomBulletY + bullet.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision())
-                    return false;
-                else
-                    return  true;
+                return gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision() ||
+                        gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision();
             }
-            case LEFT: {
+            case LEFT -> {
                 leftBulletCol = (leftBulletX - bullet.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision())
-                    return false;
-                else
-                    return  true;
+                return gamePanel.getGameMap().tiles[topBulletRow][leftBulletCol].isHasCollision() ||
+                        gamePanel.getGameMap().tiles[bottomBulletRow][leftBulletCol].isHasCollision();
             }
-            case RIGHT: {
+            case RIGHT -> {
                 rightBulletCol = (rightBulletX + bullet.getMovingSpeed()) / gamePanel.getTileSize();
 
-                if(!gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision() &&
-                        !gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision())
-                    return false;
-                else
-                    return  true;
+                return gamePanel.getGameMap().tiles[topBulletRow][rightBulletCol].isHasCollision() ||
+                        gamePanel.getGameMap().tiles[bottomBulletRow][rightBulletCol].isHasCollision();
             }
         }
 
         return false;
     }
 
-    public boolean checkEnemyCollisionWithTile(Enemy enemy) {
-        int leftEnemy1X = enemy.getPositionX();
-        int rightEnemy1X = enemy.getPositionX() + gamePanel.getTileSize(); // x pos + width
-        int topEnemy1Y = enemy.getPositionY();
-        int bottomEnemy1Y = enemy.getPositionY() + gamePanel.getTileSize(); //y pos + height
-
-        int leftEnemy1Col = leftEnemy1X / gamePanel.getTileSize();
-        int rightEnemy1Col = rightEnemy1X / gamePanel.getTileSize();
-        int topEnemy1Row = topEnemy1Y / gamePanel.getTileSize();
-        int bottomEnemy1Row = bottomEnemy1Y / gamePanel.getTileSize();
-
-        if(!enemy.isMustRotate()){
-            leftEnemy1Col = (leftEnemy1X - enemy.getMovingSpeed()) / gamePanel.getTileSize();
-
-            if (!gamePanel.getGameMap().tiles[topEnemy1Row][leftEnemy1Col].isHasCollision() &&
-                    !gamePanel.getGameMap().tiles[bottomEnemy1Row][leftEnemy1Col].isHasCollision())
-                return false;
-            else
-                return  true;
-        }else{
-            rightEnemy1Col = (rightEnemy1X + enemy.getMovingSpeed()) / gamePanel.getTileSize();
-
-            if (!gamePanel.getGameMap().tiles[topEnemy1Row][rightEnemy1Col].isHasCollision() &&
-                    !gamePanel.getGameMap().tiles[bottomEnemy1Row][rightEnemy1Col].isHasCollision())
-                return false;
-            else
-                return  true;
-        }
-    }
-
-    public boolean checkPlayerCollisionWithEnemy(Player player, ArrayList<Enemy> enemies) {
-        for(Enemy enemy : enemies){
-            if(enemy != null) {
-                enemy.rectangle.x += enemy.getPositionX();
-                enemy.rectangle.y += enemy.getPositionY();
-
-                player.rectangle.x += player.getPositionX();
-                player.rectangle.y += player.getPositionY();
-
-                switch (player.getDirection()){
-                    case UP -> {
-                        player.rectangle.y -= player.getMovingSpeed();
-                        if (player.rectangle.intersects(enemy.rectangle)){
-                            return true;
-                        }
-                    }
-                    case DOWN -> {
-                        player.rectangle.y += player.getMovingSpeed();
-                        if (player.rectangle.intersects(enemy.rectangle)) {
-                            return true;
-                        }
-                    }
-                    case LEFT -> {
-                        player.rectangle.x -= player.getMovingSpeed();
-                        if (player.rectangle.intersects(enemy.rectangle)) {
-                            return true;
-                        }
-                    }
-                    case RIGHT -> {
-                        player.rectangle.x += player.getMovingSpeed();
-                        if (player.rectangle.intersects(enemy.rectangle)) {
-                            return true;
-                        }
-                    }
-                }
-                setDefaultPlayerAndEnemyRectangle(player, enemy);
-            }
-        }
-        return false;
-    }
-
-    public boolean checkEnemyCollisionWithPlayer(Enemy enemy, Player player) {
-        if(player != null) {
-            enemy.rectangle.x += enemy.getPositionX();
-            enemy.rectangle.y += enemy.getPositionY();
-
-            player.rectangle.x += player.getPositionX();
-            player.rectangle.y += player.getPositionY();
-
-            switch (player.getDirection()){
-                case UP -> {
-                    enemy.rectangle.y -= enemy.getMovingSpeed();
-                    if (enemy.rectangle.intersects(player.rectangle)){
-                        return true;
-                    }
-                }
-                case DOWN -> {
-                    enemy.rectangle.y += enemy.getMovingSpeed();
-                    if (enemy.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-                case LEFT -> {
-                    enemy.rectangle.x -= enemy.getMovingSpeed();
-                    if (enemy.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-                case RIGHT -> {
-                    enemy.rectangle.x += enemy.getMovingSpeed();
-                    if (enemy.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-            }
-            setDefaultPlayerAndEnemyRectangle(player, enemy);
-        }
-        return false;
-    }
-
-    public boolean checkBulletWithPlayerCollision(Bullet bullet, Player player) {
-        if(player != null) {
-            bullet.rectangle.x += bullet.getPositionX();
-            bullet.rectangle.y += bullet.getPositionY();
-
-            player.rectangle.x += player.getPositionX();
-            player.rectangle.y += player.getPositionY();
-
-            switch (bullet.getDirection()){
-                case UP -> {
-                    bullet.rectangle.y -= bullet.getMovingSpeed();
-                    if (bullet.rectangle.intersects(player.rectangle)){
-                        return true;
-                    }
-                }
-                case DOWN -> {
-                    bullet.rectangle.y += bullet.getMovingSpeed();
-                    if (bullet.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-                case LEFT -> {
-                    bullet.rectangle.x -= bullet.getMovingSpeed();
-                    if (bullet.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-                case RIGHT -> {
-                    bullet.rectangle.x += bullet.getMovingSpeed();
-                    if (bullet.rectangle.intersects(player.rectangle)) {
-                        return true;
-                    }
-                }
-            }
-            setDefaultBulletAndPlayerRectangle(bullet, player);
-        }
-        return false;
-    }
-
-    public int checkBulletWithEnemyCollision(Bullet bullet, ArrayList<Enemy> enemies) {
+    public int checkBulletWithCharacters(Bullet bullet, ArrayList<Character> targets) {
         int index = -1;
-        for(Enemy enemy : enemies){
+        for(Character target : targets){
             index++;
-            if(enemy != null) {
-                enemy.rectangle.x += enemy.getPositionX();
-                enemy.rectangle.y += enemy.getPositionY();
+            if(target != null) {
+                Rectangle bulletRectangle = bullet.getRectangle();
+                Rectangle characterTargetRectangle = target.getMyRectangle();
 
-                bullet.rectangle.x += bullet.getPositionX();
-                bullet.rectangle.y += bullet.getPositionY();
+                bulletRectangle.x += bullet.getPositionX();
+                bulletRectangle.y += bullet.getPositionY();
+
+                characterTargetRectangle.x += target.getPositionX();
+                characterTargetRectangle.y += target.getPositionY();
+
 
                 switch (bullet.getDirection()){
                     case UP -> {
-                        bullet.rectangle.y -= bullet.getMovingSpeed();
-                        if (bullet.rectangle.intersects(enemy.rectangle)){
+                        bulletRectangle.y -= bullet.getMovingSpeed();
+                        if (bulletRectangle.intersects(characterTargetRectangle)){
                             return index;
                         }
                     }
                     case DOWN -> {
-                        bullet.rectangle.y += bullet.getMovingSpeed();
-                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                        bulletRectangle.y += bullet.getMovingSpeed();
+                        if (bulletRectangle.intersects(characterTargetRectangle)) {
                             return index;
                         }
                     }
                     case LEFT -> {
-                        bullet.rectangle.x -= bullet.getMovingSpeed();
-                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                        bulletRectangle.x -= bullet.getMovingSpeed();
+                        if (bulletRectangle.intersects(characterTargetRectangle)) {
                             return index;
                         }
                     }
                     case RIGHT -> {
-                        bullet.rectangle.x += bullet.getMovingSpeed();
-                        if (bullet.rectangle.intersects(enemy.rectangle)) {
+                        bulletRectangle.x += bullet.getMovingSpeed();
+                        if (bulletRectangle.intersects(characterTargetRectangle)) {
                             return index;
                         }
                     }
                 }
-                setDefaultBulletAndEnemyRectangle(bullet, enemy);
+                setDefaultBulletAndCharacterRectangle(bulletRectangle, characterTargetRectangle);
             }
         }
         return -1;
     }
 
-    private void setDefaultBulletAndPlayerRectangle(Bullet bullet, Player player) {
-        player.rectangle.x = 0;
-        player.rectangle.y = 0;
+    private void setDefaultCharactersRectangles(Rectangle characterRectangle, Rectangle characterTargetRectangle) {
+        characterRectangle.x = 0;
+        characterRectangle.y = 0;
 
-        bullet.rectangle.x = 0;
-        bullet.rectangle.y = 0;
+        characterTargetRectangle.x = 0;
+        characterTargetRectangle.y = 0;
     }
 
-    private void setDefaultBulletAndEnemyRectangle(Bullet bullet, Enemy enemy) {
-        enemy.rectangle.x = 0;
-        enemy.rectangle.y = 0;
+    private void setDefaultBulletAndCharacterRectangle(Rectangle bulletRectangle, Rectangle characterTargetRectangle) {
+        bulletRectangle.x = 0;
+        bulletRectangle.y = 0;
 
-        bullet.rectangle.x = 0;
-        bullet.rectangle.y = 0;
-    }
-
-    private void setDefaultPlayerAndEnemyRectangle(Player player, Enemy enemy) {
-        player.rectangle.x = 0;
-        player.rectangle.y = 0;
-
-        enemy.rectangle.x = 0;
-        enemy.rectangle.y = 0;
+        characterTargetRectangle.x = 0;
+        characterTargetRectangle.y = 0;
     }
 }
