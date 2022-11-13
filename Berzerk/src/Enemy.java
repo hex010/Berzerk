@@ -35,11 +35,12 @@ public class Enemy extends Character {
             gamePanel.setGameOver(true);
             return;
         }
+
         canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
         makeMove();
 
         if(!bullet.canMove)
-            checkIfIseeThePlayer();
+            checkIfISeeThePlayer();
     }
 
     private void makeMove() {
@@ -51,19 +52,38 @@ public class Enemy extends Character {
         direction = direction.opposite();
     }
 
-    private void checkIfIseeThePlayer() {
-        if(gamePanel.getPlayer().getPositionX() / gamePanel.getTileSize() == positionX / gamePanel.getTileSize()){
-            if(gamePanel.getPlayer().getPositionY() > positionY)
+    private void checkIfISeeThePlayer() {
+        if(IAndPlayerOnTheSameYAxis()){
+            if(ThePlayerBelowMe()) {
                 shootTowardsThePlayer(Direction.DOWN);
-            else
-                shootTowardsThePlayer(Direction.UP);
+                return;
+            }
+            shootTowardsThePlayer(Direction.UP);
         }
-        if(gamePanel.getPlayer().getPositionY() / gamePanel.getTileSize() == positionY / gamePanel.getTileSize()){
-            if(gamePanel.getPlayer().getPositionX() > positionX)
+
+        if(IAndPlayerOnTheSameXAxis()){
+            if(ThePlayerIsToMyRight()) {
                 shootTowardsThePlayer(Direction.RIGHT);
-            else
-                shootTowardsThePlayer(Direction.LEFT);
+                return;
+            }
+            shootTowardsThePlayer(Direction.LEFT);
         }
+    }
+
+    private boolean ThePlayerIsToMyRight() {
+        return gamePanel.getPlayer().getPositionX() > positionX;
+    }
+
+    private boolean ThePlayerBelowMe() {
+        return gamePanel.getPlayer().getPositionY() > positionY;
+    }
+
+    private boolean IAndPlayerOnTheSameXAxis() {
+        return gamePanel.getPlayer().getPositionY() / gamePanel.getTileSize() == positionY / gamePanel.getTileSize();
+    }
+
+    private boolean IAndPlayerOnTheSameYAxis() {
+        return gamePanel.getPlayer().getPositionX() / gamePanel.getTileSize() == positionX / gamePanel.getTileSize();
     }
 
     private void shootTowardsThePlayer(Direction shootDirection) {

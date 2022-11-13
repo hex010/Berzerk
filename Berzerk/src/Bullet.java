@@ -30,26 +30,39 @@ public class Bullet extends Character{
 
     @Override
     public void update(){
-        if(shotByPlayer) {
-            int enemyIndex = gamePanel.getCollision().getObjectIndexByCheckingCollisionBetweenCharacterAndCharacters(this, gamePanel.enemies);
-            if (enemyIndex != -1) {
-                gamePanel.setScore(gamePanel.getScore() + 1);
-                gamePanel.enemies.remove(enemyIndex);
-                gamePanel.addNewEnemy();
-                canMove = false;
-                return;
-            }
-        }else{
-            int playerIndex = gamePanel.getCollision().getObjectIndexByCheckingCollisionBetweenCharacterAndCharacters(this, gamePanel.players);
-            if (playerIndex != -1) {
-                gamePanel.setGameOver(true);
-                return;
-            }
-        }
+        if (shotByPlayerHitTheEnemy()) return;
+        if (shotByEnemyHitThePlayer()) return;
 
         canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
 
         direction.move(this);
+    }
+
+    private boolean shotByEnemyHitThePlayer() {
+        if(shotByPlayer) return false;
+
+        int playerIndex = gamePanel.getCollision().getObjectIndexByCheckingCollisionBetweenCharacterAndCharacters(this, gamePanel.players);
+        if (playerIndex != -1) {
+            gamePanel.setGameOver(true);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean shotByPlayerHitTheEnemy() {
+        if(!shotByPlayer) return false;
+
+        int enemyIndex = gamePanel.getCollision().getObjectIndexByCheckingCollisionBetweenCharacterAndCharacters(this, gamePanel.enemies);
+        if (enemyIndex != -1) {
+            gamePanel.setScore(gamePanel.getScore() + 1);
+            gamePanel.enemies.remove(enemyIndex);
+            gamePanel.addNewEnemy();
+            canMove = false;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
