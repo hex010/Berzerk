@@ -48,12 +48,7 @@ public class Bullet extends Character{
 
         canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
 
-        switch (direction) {
-            case UP -> moveUp();
-            case DOWN -> moveDown();
-            case LEFT -> moveLeft();
-            case RIGHT -> moveRight();
-        }
+        direction.move(this);
     }
 
     public void paint(Graphics g){

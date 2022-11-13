@@ -44,17 +44,11 @@ public class Enemy extends Character {
 
     private void makeMove() {
         if(canMove){
-            if(direction == Direction.LEFT)
-                moveLeft();
-            else
-                moveRight();
+            direction.move(this);
+            return;
         }
-        else {
-            if(direction == Direction.LEFT)
-                direction = Direction.RIGHT;
-            else
-                direction = Direction.LEFT;
-        }
+
+        direction = direction.opposite();
     }
 
     private void checkIfIseeThePlayer() {
