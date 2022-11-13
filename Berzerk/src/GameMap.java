@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class GameMap {
@@ -51,10 +52,8 @@ public class GameMap {
 
 
     public void paint(Graphics g) {
-        for (int i = 0; i < gamePanel.getMaxScreenRow(); i++) {
-            for (int j = 0; j < gamePanel.getMaxScreenColumn(); j++) {
-                g.drawImage(tiles[i][j].getBufferedImage(), tiles[i][j].getX(), tiles[i][j].getY(), gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-            }
-        }
+        Arrays.stream(tiles).flatMap(Arrays::stream).forEach(tile -> {
+            g.drawImage(tile.getBufferedImage(), tile.getX(), tile.getY(), gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        });
     }
 }
