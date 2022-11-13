@@ -185,7 +185,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private void updateBullets() {
         for(int i = 0; i < bullets.size(); i++){
             if(bullets.get(i) != null){
-                if(bullets.get(i).isActive()){
+                if(bullets.get(i).canMove){
                     bullets.get(i).update();
                 }else{
                     bullets.remove(i);

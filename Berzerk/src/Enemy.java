@@ -38,7 +38,7 @@ public class Enemy extends Character {
         canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
         makeMove();
 
-        if(!bullet.isActive())
+        if(!bullet.canMove)
             checkIfIseeThePlayer();
     }
 

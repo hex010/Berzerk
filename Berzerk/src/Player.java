@@ -64,7 +64,7 @@ public class Player extends Character {
                 return;
             }
             if(canMove)  moveRight();
-        } else if(keyHandler.isShootPressed() && !bullet.isActive()){
+        } else if(keyHandler.isShootPressed() && !bullet.canMove){
             bullet.setBullet(positionX, positionY, direction, true, true);
             gamePanel.bullets.add(bullet);
         }
