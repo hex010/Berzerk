@@ -28,6 +28,7 @@ public class Bullet extends Character{
         this.shotByPlayer = shotByPlayer;
     }
 
+    @Override
     public void update(){
         if(shotByPlayer) {
             int enemyIndex = gamePanel.getCollision().getObjectIndexByCheckingCollisionBetweenCharacterAndCharacters(this, gamePanel.enemies);
@@ -51,6 +52,7 @@ public class Bullet extends Character{
         direction.move(this);
     }
 
+    @Override
     public void paint(Graphics g){
         g.drawImage(bufferedImage, positionX, positionY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
     }

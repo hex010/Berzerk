@@ -3,7 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements Runnable, ActionListener {
@@ -16,7 +17,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private final int screenHeight = tileSize * maxScreenRow;
     private Thread gameThread;
 
-    private Map gameMap;
+    private GameMap gameMap;
     private Collision collision;
     ArrayList<Character> enemies;
     ArrayList<Character> players;
@@ -32,8 +33,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private boolean gameOver;
     private int score;
 
+    private final Map<String, GamePanelCommand> commands = new HashMap<>();
+
     public GamePanel(){
         setWindowParameters();
+        setCommandsMap();
         setButtonParameters();
         setDefaultGameValues();
     }
@@ -89,15 +93,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(Objects.equals(e.getActionCommand(), "Play again")){
-            setDefaultGameValues();
-        } else if(Objects.equals(e.getActionCommand(), "Quit")){
-            System.exit(0);
-        }
+        commands.get(e.getActionCommand()).execute();
     }
 
-    private void setDefaultGameValues() {
-        gameMap = new Map(this);
+    public void setDefaultGameValues() {
+        gameMap = new GameMap(this);
         collision = new Collision(this);
         enemies = new ArrayList<>();
         players = new ArrayList<>();
@@ -112,6 +112,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         addNewEnemies();
         players.add(new Player(this));
         gameOver = false;
+    }
+
+    private void setCommandsMap() {
+        commands.put("Play again", new PlayAgainGameCommand(this));
+        commands.put("Quit", new QuitGameCommand());
     }
 
     private void addNewEnemies() {
@@ -271,7 +276,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         return maxScreenColumn;
     }
 
-    public Map getGameMap() {
+    public GameMap getGameMap() {
         return gameMap;
     }
 

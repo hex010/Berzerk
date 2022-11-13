@@ -34,40 +34,33 @@ public class Player extends Character {
     public void update(){
         if(keyHandler.isUpPressed()){
             direction = Direction.UP;
-            canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
-            if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
-                gamePanel.setGameOver(true);
-                return;
-            }
-            if(canMove)  moveUp();
+            makeMove();
         } else if(keyHandler.isDownPressed()){
             direction = Direction.DOWN;
-            canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
-            if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
-                gamePanel.setGameOver(true);
-                return;
-            }
-            if(canMove)  moveDown();
+            makeMove();
         } else if(keyHandler.isLeftPressed()){
             direction = Direction.LEFT;
-            canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
-            if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
-                gamePanel.setGameOver(true);
-                return;
-            }
-            if(canMove)  moveLeft();
+            makeMove();
         } else if(keyHandler.isRightPressed()){
             direction = Direction.RIGHT;
-            canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
-            if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
-                gamePanel.setGameOver(true);
-                return;
-            }
-            if(canMove)  moveRight();
+            makeMove();
         } else if(keyHandler.isShootPressed() && !bullet.canMove){
-            bullet.setBullet(positionX, positionY, direction, true, true);
-            gamePanel.bullets.add(bullet);
+            shootBullet();
         }
+    }
+
+    private void shootBullet() {
+        bullet.setBullet(positionX, positionY, direction, true, true);
+        gamePanel.bullets.add(bullet);
+    }
+
+    private void makeMove() {
+        canMove = gamePanel.getCollision().checkCharacterCollisionWithTile(this);
+        if(gamePanel.getCollision().checkCharacterCollisionWithCharacters(this, gamePanel.enemies)){
+            gamePanel.setGameOver(true);
+            return;
+        }
+        if(canMove)  direction.move(this);
     }
 
     @Override

@@ -7,11 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Map {
+public class GameMap {
     GamePanel gamePanel;
     Tile[][] tiles;
 
-    public Map(GamePanel gamePanel) {
+    public GameMap(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         tiles = new Tile[gamePanel.getMaxScreenRow()][gamePanel.getMaxScreenColumn()];
         readMap();
