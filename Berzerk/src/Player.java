@@ -6,9 +6,9 @@ import java.io.IOException;
 public class Player extends Character {
     private final KeyHandler keyHandler;
 
-    public Player(GamePanel gamePanel, KeyHandler keyHandler) {
+    public Player(GamePanel gamePanel) {
         super(gamePanel);
-        this.keyHandler = keyHandler;
+        this.keyHandler = KeyHandler.getInstance();
         setDefaultValues();
         setImage();
     }

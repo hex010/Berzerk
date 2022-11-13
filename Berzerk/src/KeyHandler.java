@@ -2,6 +2,19 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class KeyHandler extends KeyAdapter {
+    static KeyHandler instance;
+
+    private KeyHandler() {
+
+    }
+
+    static KeyHandler getInstance(){
+        if(instance == null){
+            instance = new KeyHandler();
+        }
+        return instance;
+    }
+
     private boolean upPressed;
     private boolean downPressed;
     private boolean leftPressed;

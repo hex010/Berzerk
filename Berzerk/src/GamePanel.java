@@ -16,7 +16,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
     private final int screenHeight = tileSize * maxScreenRow;
     private Thread gameThread;
 
-    private final KeyHandler keyHandler = new KeyHandler();
     private Map gameMap;
     private Collision collision;
     ArrayList<Character> enemies;
@@ -111,7 +110,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         quitGameButton.setVisible(false);
         setEnemyPositionsArrayValues();
         addNewEnemies();
-        players.add(new Player(this, keyHandler));
+        players.add(new Player(this));
         gameOver = false;
     }
 
@@ -155,6 +154,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
+        KeyHandler keyHandler = KeyHandler.getInstance();
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
     }
