@@ -49,6 +49,10 @@ public class Enemy extends Character {
             return;
         }
 
+        changeDirection();
+    }
+
+    private void changeDirection() {
         direction = direction.opposite();
     }
 

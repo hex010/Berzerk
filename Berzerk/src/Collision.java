@@ -32,7 +32,7 @@ public class Collision {
         topCharacterRow = topCharacterY / gamePanel.getTileSize();
         bottomCharacterRow = bottomCharacterY / gamePanel.getTileSize();
 
-        characterMovingSpeed = character.movingSpeed;
+        characterMovingSpeed = character.getMovingSpeed();
 
         return character.getDirection().collisionBetweenCharacterAndTile(this);
     }
