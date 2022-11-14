@@ -32,21 +32,33 @@ public class Player extends Character {
 
     @Override
     public void update(){
-        if(keyHandler.isUpPressed()){
+        if(keyHandler.isUpPressed()) {
             direction = Direction.UP;
             makeMove();
-        } else if(keyHandler.isDownPressed()){
+            return;
+         }
+
+        if(keyHandler.isDownPressed()){
             direction = Direction.DOWN;
             makeMove();
-        } else if(keyHandler.isLeftPressed()){
+            return;
+         }
+
+         if(keyHandler.isLeftPressed()){
             direction = Direction.LEFT;
             makeMove();
-        } else if(keyHandler.isRightPressed()){
+            return;
+         }
+
+         if(keyHandler.isRightPressed()){
             direction = Direction.RIGHT;
             makeMove();
-        } else if(keyHandler.isShootPressed() && !bullet.canMove){
+            return;
+         }
+
+         if(keyHandler.isShootPressed() && !bullet.canMove){
             shootBullet();
-        }
+         }
     }
 
     private void shootBullet() {
